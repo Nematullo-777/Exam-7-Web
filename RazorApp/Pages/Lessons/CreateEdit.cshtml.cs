@@ -9,8 +9,7 @@ using System.Security.Claims;
 
 namespace RazorApp.Pages.Lessons;
 
-// ── Create ────────────────────────────────────────────────────────────────────
-[Authorize(Roles = UserRoles.Instructor)]
+[Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Instructor}")]
 public class CreateModel(ILessonService lessonService) : PageModel
 {
     [BindProperty] public InputModel Input { get; set; } = new();
@@ -47,8 +46,7 @@ public class CreateModel(ILessonService lessonService) : PageModel
     }
 }
 
-// ── Edit ──────────────────────────────────────────────────────────────────────
-[Authorize(Roles = UserRoles.Instructor)]
+[Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Instructor}")]
 public class EditModel(ILessonService lessonService) : PageModel
 {
     [BindProperty] public InputModel Input { get; set; } = new();

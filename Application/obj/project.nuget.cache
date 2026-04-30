@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "pCKNiNRYScw=",
+  "dgSpecHash": "y8ZB9HgBcck=",
   "success": true,
   "projectFilePath": "C:\\Users\\user\\Desktop\\Exam-7\\OnlineCourses\\Application\\Application.csproj",
   "expectedPackageFiles": [
@@ -24,6 +24,9 @@
     "C:\\Users\\user\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\9.0.15\\microsoft.extensions.logging.abstractions.9.0.15.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.extensions.options\\9.0.15\\microsoft.extensions.options.9.0.15.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.extensions.primitives\\9.0.15\\microsoft.extensions.primitives.9.0.15.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\revealnext.commonlibs.common\\13.23.116.1010\\revealnext.commonlibs.common.13.23.116.1010.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\revealnext.commonlibs.diagloader\\13.23.116.1410\\revealnext.commonlibs.diagloader.13.23.116.1410.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\softcircuits.inifileparser\\2.1.0\\softcircuits.inifileparser.2.1.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.netcore.app.ref\\9.0.15\\microsoft.netcore.app.ref.9.0.15.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\9.0.15\\microsoft.windowsdesktop.app.ref.9.0.15.nupkg.sha512",

@@ -14,6 +14,10 @@ public class RegisterDto
     [Required]
     [MinLength(6)]
     public string Password { get; set; } = string.Empty;
+    
+    [Required]
+    [MinLength(6)]
+    public string ConfirmPassword { get; set; } = string.Empty;
 
     [Required]
     public string Role { get; set; } = string.Empty; // "Student" or "In

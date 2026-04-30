@@ -12,7 +12,7 @@ using System.Security.Claims;
 
 namespace RazorApp.Pages.Courses;
 
-[Authorize(Roles = UserRoles.Instructor)]
+[Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Admin}")]
 public class CreateModel(ICourseService courseService, ICategoryService categoryService) : PageModel
 {
     [BindProperty]

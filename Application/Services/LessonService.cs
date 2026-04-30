@@ -45,7 +45,8 @@ public class LessonService(
             VideoUrl = dto.VideoUrl,
             Order = dto.Order,
             CourseId = courseId,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            MaterialPath = string.Empty
         };
 
         var created = await lessonRepository.CreateAsync(lesson);

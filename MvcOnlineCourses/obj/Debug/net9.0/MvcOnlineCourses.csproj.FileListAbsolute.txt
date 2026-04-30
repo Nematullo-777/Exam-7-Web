@@ -82,8 +82,6 @@ C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\com
 C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\compressed\vhuu05vs3v-{0}-muycvpuwrr-muycvpuwrr.gz
 C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\compressed\3qxtdckxt8-{0}-87fc7y1x7t-87fc7y1x7t.gz
 C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\compressed\g9kkr3a5t8-{0}-mlv21k5csn-mlv21k5csn.gz
-C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\compressed\2qnud4a1oc-{0}-rbg3gd762z-rbg3gd762z.gz
-C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\compressed\4s748z5he7-{0}-rbg3gd762z-rbg3gd762z.gz
 C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\staticwebassets.build.json
 C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\staticwebassets.development.json
@@ -134,3 +132,8 @@ C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\bin\Debug\net9.0\Dom
 C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\compressed\v1gwi3xaze-{0}-v387yur99c-v387yur99c.gz
 C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\compressed\ccvegh3b0y-{0}-i2lftgyb8h-i2lftgyb8h.gz
 C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\MvcOnlin.35B11D54.Up2Date
+C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\bin\Debug\net9.0\revealnext.CommonLibs.Common.dll
+C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\bin\Debug\net9.0\revealnext.CommonLibs.DiagLoader.dll
+C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\bin\Debug\net9.0\IniFileParser.dll
+C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\compressed\2qnud4a1oc-{0}-rbg3gd762z-rbg3gd762z.gz
+C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\compressed\4s748z5he7-{0}-rbg3gd762z-rbg3gd762z.gz

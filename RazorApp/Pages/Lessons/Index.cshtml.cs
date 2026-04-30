@@ -9,7 +9,6 @@ using System.Security.Claims;
 
 namespace RazorApp.Pages.Lessons;
 
-// ── Lessons/Index — список уроков курса ───────────────────────────────────────
 [Authorize]
 public class IndexModel(ILessonService lessonService) : PageModel
 {

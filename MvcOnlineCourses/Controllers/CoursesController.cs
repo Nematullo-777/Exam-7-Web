@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MvcOnlineCourses.ViewModels;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MvcOnlineCourses.Controllers;
 
@@ -47,16 +48,15 @@ public class CoursesController(
         return View(result.Value);
     }
 
-    [Authorize(Roles = UserRoles.Instructor)]
+    [Authorize(Roles = $"{UserRoles.Instructor},{UserRoles.Admin}")]
     [HttpGet]
     public async Task<IActionResult> Create()
     {
-        var categories = await categoryService.GetAllAsync();
-        ViewBag.Categories = categories.Value ?? new List<Application.DTOs.CategoryDTOs.CategoryDto>();
-        return View(new CreateCourseViewModel());
+        await PopulateCategoriesAsync();
+        return View();
     }
 
-    [Authorize(Roles = UserRoles.Instructor)]
+    [Authorize(Roles = $"{UserRoles.Instructor},{UserRoles.Admin}")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateCourseViewModel vm, IFormFile? thumbnail)
@@ -91,6 +91,7 @@ public class CoursesController(
         return RedirectToAction("Index");
     }
 
+    [Authorize(Roles = $"{UserRoles.Instructor},{UserRoles.Admin}")]
     [HttpGet]
     public async Task<IActionResult> Edit(Guid id)
     {
@@ -112,7 +113,7 @@ public class CoursesController(
             Description = course.Description,
             Price = course.Price,
             Level = course.Level,
-            CategoryId = course.CategoryId
+            CategoryId = course.CategoryId,
         });
     }
 
@@ -133,7 +134,7 @@ public class CoursesController(
             Description = vm.Description,
             Price = vm.Price,
             Level = vm.Level,
-            CategoryId = vm.CategoryId
+            CategoryId = vm.CategoryId,
         });
 
         if (!result.IsSuccess)
@@ -149,7 +150,8 @@ public class CoursesController(
 
         return RedirectToAction("Index");
     }
-
+    
+    [Authorize(Roles = $"{UserRoles.Instructor},{UserRoles.Admin}")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid id)
@@ -158,12 +160,18 @@ public class CoursesController(
         return RedirectToAction("Index");
     }
 
-    [Authorize(Roles = UserRoles.Instructor)]
+    [Authorize(Roles = $"{UserRoles.Instructor},{UserRoles.Admin}")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> TogglePublish(Guid id)
     {
         await courseService.TogglePublishAsync(id, UserId);
         return RedirectToAction("Index");
+    }
+    
+    private async Task PopulateCategoriesAsync()
+    {
+        var cats = await categoryService.GetAllAsync();
+        ViewBag.Categories = new SelectList(cats.Value, "Id", "Name");
     }
 }

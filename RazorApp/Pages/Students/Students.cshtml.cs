@@ -10,7 +10,6 @@ using System.Security.Claims;
 
 namespace RazorApp.Pages.Students;
 
-// ── Index — список студентов (Admin) ──────────────────────────────────────────
 [Authorize(Roles = UserRoles.Admin)]
 public class IndexModel(IStudentService studentService) : PageModel
 {
@@ -31,7 +30,6 @@ public class IndexModel(IStudentService studentService) : PageModel
     }
 }
 
-// ── Details ───────────────────────────────────────────────────────────────────
 [Authorize]
 public class DetailsModel(IStudentService studentService) : PageModel
 {
@@ -47,7 +45,6 @@ public class DetailsModel(IStudentService studentService) : PageModel
     }
 }
 
-// ── Edit ──────────────────────────────────────────────────────────────────────
 [Authorize]
 public class EditModel(IStudentService studentService) : PageModel
 {

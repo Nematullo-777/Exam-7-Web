@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "FCNyUOgeNQI=",
+  "dgSpecHash": "afittmRysO8=",
   "success": true,
   "projectFilePath": "C:\\Users\\user\\Desktop\\Exam-7\\OnlineCourses\\Infrastructure\\Infrastructure.csproj",
   "expectedPackageFiles": [
@@ -32,6 +32,9 @@
     "C:\\Users\\user\\.nuget\\packages\\npgsql\\9.0.3\\npgsql.9.0.3.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\9.0.4\\npgsql.entityframeworkcore.postgresql.9.0.4.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\pipelines.sockets.unofficial\\2.2.8\\pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\revealnext.commonlibs.common\\13.23.116.1010\\revealnext.commonlibs.common.13.23.116.1010.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\revealnext.commonlibs.diagloader\\13.23.116.1410\\revealnext.commonlibs.diagloader.13.23.116.1410.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\softcircuits.inifileparser\\2.1.0\\softcircuits.inifileparser.2.1.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\stackexchange.redis\\2.7.27\\stackexchange.redis.2.7.27.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\system.identitymodel.tokens.jwt\\8.17.0\\system.identitymodel.tokens.jwt.8.17.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\system.io.pipelines\\5.0.1\\system.io.pipelines.5.0.1.nupkg.sha512",

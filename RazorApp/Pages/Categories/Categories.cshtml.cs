@@ -8,7 +8,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RazorApp.Pages.Categories;
 
-// ── Index ─────────────────────────────────────────────────────────────────────
 [Authorize(Roles = UserRoles.Admin)]
 public class IndexModel(ICategoryService categoryService) : PageModel
 {
@@ -32,7 +31,6 @@ public class IndexModel(ICategoryService categoryService) : PageModel
     }
 }
 
-// ── Create ────────────────────────────────────────────────────────────────────
 [Authorize(Roles = UserRoles.Admin)]
 public class CreateModel(ICategoryService categoryService) : PageModel
 {
@@ -66,7 +64,6 @@ public class CreateModel(ICategoryService categoryService) : PageModel
     }
 }
 
-// ── Edit ──────────────────────────────────────────────────────────────────────
 [Authorize(Roles = UserRoles.Admin)]
 public class EditModel(ICategoryService categoryService) : PageModel
 {

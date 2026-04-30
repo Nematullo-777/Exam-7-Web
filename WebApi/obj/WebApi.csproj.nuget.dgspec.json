@@ -51,6 +51,10 @@
             "Microsoft.AspNetCore.Http.Abstractions": {
               "target": "Package",
               "version": "[2.3.9, )"
+            },
+            "revealnext.CommonLibs.DiagLoader": {
+              "target": "Package",
+              "version": "[13.23.116.1410, )"
             }
           },
           "imports": [

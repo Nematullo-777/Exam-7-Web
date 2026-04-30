@@ -270,7 +270,7 @@ namespace Infrastructure.Migrations
                     Content = table.Column<string>(type: "text", nullable: true),
                     Content1 = table.Column<string>(type: "text", nullable: false),
                     VideoUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    MaterialPath = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    MaterialPath = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     Order = table.Column<int>(type: "integer", nullable: false),
                     DurationMinutes = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),

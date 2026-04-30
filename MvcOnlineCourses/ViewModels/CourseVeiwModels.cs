@@ -19,6 +19,8 @@ public class CreateCourseViewModel
 
     [Required(ErrorMessage = "Категория обязательна")]
     public Guid CategoryId { get; set; }
+    
+    public IFormFile? Thumbnail { get; set; }
 }
 
 public class EditCourseViewModel

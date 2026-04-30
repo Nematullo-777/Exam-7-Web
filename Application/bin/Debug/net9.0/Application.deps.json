@@ -9,7 +9,8 @@
       "Application/1.0.0": {
         "dependencies": {
           "Domain": "1.0.0",
-          "Microsoft.AspNetCore.Http.Abstractions": "2.3.9"
+          "Microsoft.AspNetCore.Http.Abstractions": "2.3.9",
+          "revealnext.CommonLibs.DiagLoader": "13.23.116.1410"
         },
         "runtime": {
           "Application.dll": {}
@@ -229,6 +230,36 @@
           }
         }
       },
+      "revealnext.CommonLibs.Common/13.23.116.1010": {
+        "dependencies": {
+          "SoftCircuits.IniFileParser": "2.1.0"
+        },
+        "runtime": {
+          "lib/net6.0/revealnext.CommonLibs.Common.dll": {
+            "assemblyVersion": "13.23.116.1010",
+            "fileVersion": "13.23.116.1010"
+          }
+        }
+      },
+      "revealnext.CommonLibs.DiagLoader/13.23.116.1410": {
+        "dependencies": {
+          "revealnext.CommonLibs.Common": "13.23.116.1010"
+        },
+        "runtime": {
+          "lib/net6.0/revealnext.CommonLibs.DiagLoader.dll": {
+            "assemblyVersion": "13.23.116.1410",
+            "fileVersion": "13.23.116.1410"
+          }
+        }
+      },
+      "SoftCircuits.IniFileParser/2.1.0": {
+        "runtime": {
+          "lib/net6.0/IniFileParser.dll": {
+            "assemblyVersion": "2.1.0.0",
+            "fileVersion": "2.1.0.0"
+          }
+        }
+      },
       "Domain/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "9.0.15"
@@ -380,6 +411,27 @@
       "sha512": "sha512-WRPJ9kpIwsOcghRT0tduIqiz7CDv7WsnL4kTJavtHS4j5AW++4LlR63oOSTL2o/zLR4T1z0/FQMgrnsPJ5bpQQ==",
       "path": "microsoft.extensions.primitives/9.0.15",
       "hashPath": "microsoft.extensions.primitives.9.0.15.nupkg.sha512"
+    },
+    "revealnext.CommonLibs.Common/13.23.116.1010": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-OM53EY1ssma2oAvdP02nkRUfKKjZ937iNsCG6BOKP6AteCRNeQ7Mwo3U3JOB89D7nMzTUUGpCzC+qj4f8d2Etw==",
+      "path": "revealnext.commonlibs.common/13.23.116.1010",
+      "hashPath": "revealnext.commonlibs.common.13.23.116.1010.nupkg.sha512"
+    },
+    "revealnext.CommonLibs.DiagLoader/13.23.116.1410": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wPt0pAJyBcC174F77q59H+DRt8M+U7at0WwHHltybDH6cf9ir+s5Wd/SjDvKsPjSNUbajgan4ptp2PG+/uqMWg==",
+      "path": "revealnext.commonlibs.diagloader/13.23.116.1410",
+      "hashPath": "revealnext.commonlibs.diagloader.13.23.116.1410.nupkg.sha512"
+    },
+    "SoftCircuits.IniFileParser/2.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-g89iteucS2+h8mIgNar2OZOggOMeTnIgxZ6CCXlu2GjRnyJF3ULG4p+FtBwmBALxKzNYmkLDCyVNZQSer+rSvQ==",
+      "path": "softcircuits.inifileparser/2.1.0",
+      "hashPath": "softcircuits.inifileparser.2.1.0.nupkg.sha512"
     },
     "Domain/1.0.0": {
       "type": "project",

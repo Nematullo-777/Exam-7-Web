@@ -37,7 +37,7 @@ public class LessonsController(
         return View(result.Value);
     }
 
-    [Authorize(Roles = UserRoles.Instructor)]
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Instructor}")]
     [HttpGet]
     public async Task<IActionResult> Create(Guid courseId)
     {
@@ -47,7 +47,7 @@ public class LessonsController(
         return View(new CreateLessonViewModel { CourseId = courseId });
     }
 
-    [Authorize(Roles = UserRoles.Instructor)]
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Instructor}")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateLessonViewModel vm)

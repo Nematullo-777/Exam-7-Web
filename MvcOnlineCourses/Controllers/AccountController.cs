@@ -55,6 +55,7 @@ public class AccountController(IAuthService authService) : Controller
             FullName = model.FullName,
             Email = model.Email,
             Password = model.Password,
+            ConfirmPassword = model.Password,
             Role = model.Role
         });
 
@@ -63,8 +64,7 @@ public class AccountController(IAuthService authService) : Controller
             ModelState.AddModelError("", result.Error ?? "Ошибка регистрации");
             return View(model);
         }
-
-        // 🔥 АВТО-ЛОГИН (вставить сюда)
+        
         var loginResult = await authService.LoginAsync(new LoginDto
         {
             Email = model.Email,
@@ -79,12 +79,10 @@ public class AccountController(IAuthService authService) : Controller
                 Secure = false,
                 Expires = DateTime.UtcNow.AddHours(3)
             });
-
-            // 🔥 редирект на главную
+            
             return RedirectToAction("Index", "Courses");
         }
-
-        // если вдруг логин не прошёл
+        
         return RedirectToAction("Login");
     }
 

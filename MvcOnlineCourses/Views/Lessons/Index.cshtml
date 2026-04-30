@@ -71,14 +71,21 @@
                             @if (User.IsInRole("Instructor") || User.IsInRole("Admin"))
                             {
                                 <td>
-                                    <form asp-controller="Lessons" asp-action="Delete" method="post" style="display: inline;">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="id" value="@lesson.Id" />
-                                        <input type="hidden" name="courseId" value="@lesson.CourseId" />
-                                        <button type="submit" class="btn-delete-custom" style="padding: 4px 12px; font-size: 12px;" onclick="return confirm('Удалить урок?')">
-                                            Удалить
-                                        </button>
-                                    </form>
+                                    <div class="d-flex gap-2">
+                                        <a asp-controller="Lessons" asp-action="Edit" asp-route-id="@lesson.Id" 
+                                           class="btn-edit-custom" style="padding: 4px 12px; font-size: 12px; text-decoration: none;">
+                                            Изменить
+                                        </a>
+
+                                        <form asp-controller="Lessons" asp-action="Delete" method="post" style="display: inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@lesson.Id" />
+                                            <input type="hidden" name="courseId" value="@lesson.CourseId" />
+                                            <button type="submit" class="btn-delete-custom" style="padding: 4px 12px; font-size: 12px;" onclick="return confirm('Удалить урок?')">
+                                                Удалить
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             }
                         </tr>

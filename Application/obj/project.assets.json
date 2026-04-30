@@ -346,6 +346,39 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
+      "revealnext.CommonLibs.Common/13.23.116.1010": {
+        "type": "package",
+        "dependencies": {
+          "SoftCircuits.IniFileParser": "2.1.0"
+        },
+        "compile": {
+          "lib/net6.0/revealnext.CommonLibs.Common.dll": {}
+        },
+        "runtime": {
+          "lib/net6.0/revealnext.CommonLibs.Common.dll": {}
+        }
+      },
+      "revealnext.CommonLibs.DiagLoader/13.23.116.1410": {
+        "type": "package",
+        "dependencies": {
+          "revealnext.CommonLibs.Common": "13.23.116.1010"
+        },
+        "compile": {
+          "lib/net6.0/revealnext.CommonLibs.DiagLoader.dll": {}
+        },
+        "runtime": {
+          "lib/net6.0/revealnext.CommonLibs.DiagLoader.dll": {}
+        }
+      },
+      "SoftCircuits.IniFileParser/2.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/IniFileParser.dll": {}
+        },
+        "runtime": {
+          "lib/net6.0/IniFileParser.dll": {}
+        }
+      },
       "System.Text.Encodings.Web/8.0.0": {
         "type": "package",
         "compile": {
@@ -879,6 +912,47 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "revealnext.CommonLibs.Common/13.23.116.1010": {
+      "sha512": "OM53EY1ssma2oAvdP02nkRUfKKjZ937iNsCG6BOKP6AteCRNeQ7Mwo3U3JOB89D7nMzTUUGpCzC+qj4f8d2Etw==",
+      "type": "package",
+      "path": "revealnext.commonlibs.common/13.23.116.1010",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net6.0/revealnext.CommonLibs.Common.dll",
+        "revealnext.commonlibs.common.13.23.116.1010.nupkg.sha512",
+        "revealnext.commonlibs.common.nuspec"
+      ]
+    },
+    "revealnext.CommonLibs.DiagLoader/13.23.116.1410": {
+      "sha512": "wPt0pAJyBcC174F77q59H+DRt8M+U7at0WwHHltybDH6cf9ir+s5Wd/SjDvKsPjSNUbajgan4ptp2PG+/uqMWg==",
+      "type": "package",
+      "path": "revealnext.commonlibs.diagloader/13.23.116.1410",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net6.0/revealnext.CommonLibs.DiagLoader.dll",
+        "revealnext.commonlibs.diagloader.13.23.116.1410.nupkg.sha512",
+        "revealnext.commonlibs.diagloader.nuspec"
+      ]
+    },
+    "SoftCircuits.IniFileParser/2.1.0": {
+      "sha512": "g89iteucS2+h8mIgNar2OZOggOMeTnIgxZ6CCXlu2GjRnyJF3ULG4p+FtBwmBALxKzNYmkLDCyVNZQSer+rSvQ==",
+      "type": "package",
+      "path": "softcircuits.inifileparser/2.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "License.txt",
+        "Logo_64x64.png",
+        "Readme.md",
+        "lib/net5.0/IniFileParser.dll",
+        "lib/net6.0/IniFileParser.dll",
+        "lib/netstandard2.0/IniFileParser.dll",
+        "softcircuits.inifileparser.2.1.0.nupkg.sha512",
+        "softcircuits.inifileparser.nuspec"
+      ]
+    },
     "System.Text.Encodings.Web/8.0.0": {
       "sha512": "yev/k9GHAEGx2Rg3/tU6MQh4HGBXJs70y7j1LaM1i/ER9po+6nnQ6RRqTJn1E7Xu0fbIFK80Nh5EoODxrbxwBQ==",
       "type": "package",
@@ -923,7 +997,8 @@
   "projectFileDependencyGroups": {
     "net9.0": [
       "Domain >= 1.0.0",
-      "Microsoft.AspNetCore.Http.Abstractions >= 2.3.9"
+      "Microsoft.AspNetCore.Http.Abstractions >= 2.3.9",
+      "revealnext.CommonLibs.DiagLoader >= 13.23.116.1410"
     ]
   },
   "packageFolders": {
@@ -976,6 +1051,10 @@
           "Microsoft.AspNetCore.Http.Abstractions": {
             "target": "Package",
             "version": "[2.3.9, )"
+          },
+          "revealnext.CommonLibs.DiagLoader": {
+            "target": "Package",
+            "version": "[13.23.116.1410, )"
           }
         },
         "imports": [

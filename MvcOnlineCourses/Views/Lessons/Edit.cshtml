@@ -1,0 +1,60 @@
+﻿@model MvcOnlineCourses.ViewModels.EditLessonViewModel
+@* Замените путь выше на ваш актуальный namespace, например YourProject.Pages.Lessons.EditModel *@
+
+<div class="main-content-wrapper" style="padding: 20px;">
+    <div class="table-card" style="max-width: 700px; margin: auto; padding: 30px; background: white; border-radius: 15px; border: 1px solid #eee;">
+        <h3 class="mb-4" style="font-weight: 700;">Редактировать урок</h3>
+
+        <form method="post">
+            @Html.AntiForgeryToken()
+            
+            @* Передаем ID и CourseId скрытыми полями *@
+            <input type="hidden" name="Input.Id" value="@Model.Id" />
+            <input type="hidden" name="CourseId" value="@Model.CourseId" />
+
+            <div class="mb-3">
+                <label class="form-label small text-muted text-uppercase fw-bold">Название урока</label>
+                <input name="Input.Title" value="@Model.Title" class="form-control" style="border-radius: 10px; padding: 12px;" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small text-muted text-uppercase fw-bold">Содержание</label>
+                <textarea name="@Model.Content" class="form-control" rows="6" style="border-radius: 10px; padding: 12px;" required>Content</textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small text-muted text-uppercase fw-bold">Ссылка на видео</label>
+                <input name="@Model.VideoUrl" value="VideoUrl" class="form-control" style="border-radius: 10px; padding: 12px;" />
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="form-label small text-muted text-uppercase fw-bold">Порядок</label>
+                    <input name="@Model.Order" type="number" value="@Model.Order" class="form-control" style="border-radius: 10px; padding: 12px;" />
+                </div>
+            </div>
+
+            <div class="d-flex gap-3">
+                <button type="submit" class="btn btn-dark" style="padding: 12px 30px; border-radius: 10px; background: #111;">
+                    Сохранить изменения
+                </button>
+                <a asp-page="/Lessons/Index" asp-route-courseId="@Model.CourseId" class="btn btn-light" style="padding: 12px 30px; border-radius: 10px; border: 1px solid #ddd;">
+                    Отмена
+                </a>
+            </div>
+            
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger mt-3 small">
+                    @foreach (var modelState in ViewData.ModelState.Values)
+                    {
+                        @foreach (var error in modelState.Errors)
+                        {
+                            <div>@error.ErrorMessage</div>
+                        }
+                    }
+                </div>
+            }
+        </form>
+    </div>
+</div>

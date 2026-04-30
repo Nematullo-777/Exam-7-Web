@@ -282,3 +282,6 @@ C:\Users\user\Desktop\Exam-7\OnlineCourses\WebApi\obj\Debug\net10.0\swae.build.e
 C:\Users\user\Desktop\Exam-7\OnlineCourses\WebApi\obj\Debug\net10.0\WebApi.csproj.Up2Date
 C:\Users\user\Desktop\Exam-7\OnlineCourses\WebApi\obj\Debug\net10.0\WebApi.genruntimeconfig.cache
 C:\Users\user\Desktop\Exam-7\OnlineCourses\WebApi\obj\Debug\net10.0\ref\WebApi.dll
+C:\Users\user\Desktop\Exam-7\OnlineCourses\WebApi\bin\Debug\net10.0\revealnext.CommonLibs.Common.dll
+C:\Users\user\Desktop\Exam-7\OnlineCourses\WebApi\bin\Debug\net10.0\revealnext.CommonLibs.DiagLoader.dll
+C:\Users\user\Desktop\Exam-7\OnlineCourses\WebApi\bin\Debug\net10.0\IniFileParser.dll

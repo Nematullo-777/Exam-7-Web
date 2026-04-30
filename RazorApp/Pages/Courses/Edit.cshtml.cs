@@ -11,7 +11,7 @@ using System.Security.Claims;
 
 namespace RazorApp.Pages.Courses;
 
-[Authorize(Roles = UserRoles.Instructor)]
+[Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Instructor}")]
 public class EditModel(ICourseService courseService, ICategoryService categoryService) : PageModel
 {
     [BindProperty] public InputModel Input { get; set; } = new();

@@ -13,16 +13,14 @@ public class EnrollmentsController(IEnrollmentService enrollmentService) : Contr
     private string UserId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
     private Guid UserGuid => Guid.Parse(UserId);
     private bool IsAdmin => User.IsInRole(UserRoles.Admin);
-
-    // Список моих записей (для студента)
+    
     [HttpGet]
     public async Task<IActionResult> MyEnrollments()
     {
         var result = await enrollmentService.GetMyEnrollmentsAsync(UserId);
         return View(result.Value ?? new List<EnrollmentDto>());
     }
-
-    // Все записи (только для Admin)
+    
     [Authorize(Roles = UserRoles.Admin)]
     [HttpGet]
     public async Task<IActionResult> Index(int page = 1)
@@ -32,8 +30,7 @@ public class EnrollmentsController(IEnrollmentService enrollmentService) : Contr
         ViewBag.TotalPages = result.Value?.TotalPages ?? 1;
         return View(result.Value?.Items ?? new List<EnrollmentDto>());
     }
-
-    // Записаться на курс
+    
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Enroll(Guid courseId)
@@ -48,8 +45,7 @@ public class EnrollmentsController(IEnrollmentService enrollmentService) : Contr
 
         return RedirectToAction("MyEnrollments");
     }
-
-    // Отменить запись
+    
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Cancel(Guid enrollmentId)
@@ -57,8 +53,7 @@ public class EnrollmentsController(IEnrollmentService enrollmentService) : Contr
         await enrollmentService.CancelEnrollmentAsync(enrollmentId, UserGuid);
         return RedirectToAction("MyEnrollments");
     }
-
-    // Обновить прогресс
+    
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateProgress(Guid enrollmentId, int progressPercent)
@@ -69,9 +64,7 @@ public class EnrollmentsController(IEnrollmentService enrollmentService) : Contr
         });
         return RedirectToAction("MyEnrollments");
     }
-
-    // ---- Отзывы ----
-
+    
     [HttpGet]
     public async Task<IActionResult> Reviews(Guid courseId)
     {
