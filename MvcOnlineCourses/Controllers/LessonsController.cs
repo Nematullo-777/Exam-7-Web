@@ -1,8 +1,6 @@
 using Application.DTOs.LessonDTOs;
-using Application.Interfaces.Repositories;
 using Application.Interfaces.Services;
 using Domain.Constants;
-using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MvcOnlineCourses.ViewModels;
@@ -13,9 +11,7 @@ namespace MvcOnlineCourses.Controllers;
 [Authorize]
 public class LessonsController(
     ILessonService lessonService,
-    ICourseService courseService,
-    ILessonRepository lessonRepository,
-    ICourseRepository courseRepository) : Controller
+    ICourseService courseService) : Controller
 {
     private string UserId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
     private bool IsAdmin => User.IsInRole(UserRoles.Admin);
@@ -32,15 +28,38 @@ public class LessonsController(
         return View(lessons.Value ?? new List<LessonDto>());
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Details(Guid id, Guid courseId)
+    {
+        var result = await lessonService.GetByIdAsync(id);
+        if (!result.IsSuccess) return NotFound();
+        ViewBag.CourseId = courseId;
+        return View(result.Value);
+    }
+
+    [Authorize(Roles = UserRoles.Instructor)]
+    [HttpGet]
+    public async Task<IActionResult> Create(Guid courseId)
+    {
+        var course = await courseService.GetByIdAsync(courseId);
+        if (!course.IsSuccess) return NotFound();
+        ViewBag.Course = course.Value;
+        return View(new CreateLessonViewModel { CourseId = courseId });
+    }
+
     [Authorize(Roles = UserRoles.Instructor)]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateLessonViewModel vm)
     {
         if (!ModelState.IsValid)
-            return RedirectToAction("Index", new { courseId = vm.CourseId });
+        {
+            var course = await courseService.GetByIdAsync(vm.CourseId);
+            ViewBag.Course = course.Value;
+            return View(vm);
+        }
 
-        await lessonService.CreateAsync(vm.CourseId, UserId, new CreateLessonDto
+        var result = await lessonService.CreateAsync(vm.CourseId, UserId, new CreateLessonDto
         {
             Title = vm.Title,
             Content = vm.Content,
@@ -48,6 +67,73 @@ public class LessonsController(
             Order = vm.Order,
             DurationMinutes = vm.DurationMinutes
         });
+
+        if (!result.IsSuccess)
+        {
+            ModelState.AddModelError("", result.Error ?? "Ошибка при создании урока");
+            var course = await courseService.GetByIdAsync(vm.CourseId);
+            ViewBag.Course = course.Value;
+            return View(vm);
+        }
+
+        return RedirectToAction("Index", new { courseId = vm.CourseId });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Edit(Guid id, Guid courseId)
+    {
+        var result = await lessonService.GetByIdAsync(id);
+        if (!result.IsSuccess) return NotFound();
+
+        var lesson = result.Value!;
+
+        var course = await courseService.GetByIdAsync(courseId);
+        if (!course.IsSuccess) return NotFound();
+
+        if (!IsAdmin && course.Value!.InstructorId != UserId)
+            return Forbid();
+
+        ViewBag.Course = course.Value;
+
+        return View(new EditLessonViewModel
+        {
+            Id = lesson.Id,
+            CourseId = courseId,
+            Title = lesson.Title,
+            Content = lesson.Content,
+            VideoUrl = lesson.VideoUrl,
+            Order = lesson.Order,
+            DurationMinutes = lesson.DurationMinutes
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(EditLessonViewModel vm)
+    {
+        if (!ModelState.IsValid)
+        {
+            var course = await courseService.GetByIdAsync(vm.CourseId);
+            ViewBag.Course = course.Value;
+            return View(vm);
+        }
+
+        var result = await lessonService.UpdateAsync(vm.Id, UserId, IsAdmin, new UpdateLessonDto
+        {
+            Title = vm.Title,
+            Content = vm.Content,
+            VideoUrl = vm.VideoUrl,
+            Order = vm.Order,
+            DurationMinutes = vm.DurationMinutes
+        });
+
+        if (!result.IsSuccess)
+        {
+            ModelState.AddModelError("", result.Error ?? "Ошибка при обновлении урока");
+            var course = await courseService.GetByIdAsync(vm.CourseId);
+            ViewBag.Course = course.Value;
+            return View(vm);
+        }
 
         return RedirectToAction("Index", new { courseId = vm.CourseId });
     }

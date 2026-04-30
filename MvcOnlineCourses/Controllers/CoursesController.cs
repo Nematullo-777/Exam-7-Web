@@ -48,16 +48,44 @@ public class CoursesController(
     }
 
     [Authorize(Roles = UserRoles.Instructor)]
+    [HttpGet]
+    public async Task<IActionResult> Create()
+    {
+        var categories = await categoryService.GetAllAsync();
+        ViewBag.Categories = categories.Value ?? new List<Application.DTOs.CategoryDTOs.CategoryDto>();
+        return View(new CreateCourseViewModel());
+    }
+
+    [Authorize(Roles = UserRoles.Instructor)]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateCourseDto dto, IFormFile? thumbnail)
+    public async Task<IActionResult> Create(CreateCourseViewModel vm, IFormFile? thumbnail)
     {
         if (!ModelState.IsValid)
-            return RedirectToAction("Index");
+        {
+            var cats = await categoryService.GetAllAsync();
+            ViewBag.Categories = cats.Value ?? new List<Application.DTOs.CategoryDTOs.CategoryDto>();
+            return View(vm);
+        }
 
-        var result = await courseService.CreateAsync(UserId, dto);
+        var result = await courseService.CreateAsync(UserId, new CreateCourseDto
+        {
+            Title = vm.Title,
+            Description = vm.Description,
+            Price = vm.Price,
+            Level = vm.Level,
+            CategoryId = vm.CategoryId
+        });
 
-        if (result.IsSuccess && thumbnail != null)
+        if (!result.IsSuccess)
+        {
+            ModelState.AddModelError("", result.Error ?? "Ошибка при создании курса");
+            var cats = await categoryService.GetAllAsync();
+            ViewBag.Categories = cats.Value ?? new List<Application.DTOs.CategoryDTOs.CategoryDto>();
+            return View(vm);
+        }
+
+        if (thumbnail != null)
             await courseService.UploadThumbnailAsync(result.Value!.Id, UserId, thumbnail);
 
         return RedirectToAction("Index");
