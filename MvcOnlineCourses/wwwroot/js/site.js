@@ -1,0 +1,1 @@
+// EduPortal MVC scripts

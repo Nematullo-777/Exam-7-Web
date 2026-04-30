@@ -1,0 +1,68 @@
+@model List<Application.DTOs.CategoryDTOs.CategoryDto>
+@{
+    ViewData["Title"] = "Категории";
+}
+
+<div class="main-content-wrapper">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 style="font-weight: 700; color: #000; margin: 0; font-size: 28px;">Категории</h2>
+            <p style="color: #9197b3; font-size: 14px; margin-top: 5px;">@Model.Count категорий</p>
+        </div>
+        <button type="button" class="btn-dark-custom shadow-sm" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+            <span style="font-size: 18px; margin-right: 8px;">+</span> Добавить
+        </button>
+    </div>
+
+    <div class="categories-grid">
+        @foreach (var cat in Model)
+        {
+            <div class="category-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="cat-icon">
+                        <i class="bi bi-tag-fill"></i>
+                    </div>
+                    <form asp-controller="Categories" asp-action="Delete" asp-route-id="@cat.Id" method="post" style="margin: 0;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn-delete-custom" style="padding: 4px 10px; font-size: 12px;" onclick="return confirm('Удалить категорию?')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+                <h5 class="cat-name">@cat.Name</h5>
+                @if (!string.IsNullOrEmpty(cat.Description))
+                {
+                    <p class="cat-desc">@cat.Description</p>
+                }
+                <div class="cat-count">
+                    <i class="bi bi-collection-play me-1"></i>@cat.CourseCount курсов
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="createCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 24px; border: none;">
+            <div class="modal-header" style="border-bottom: 1px solid #f0f0f0; padding: 24px;">
+                <h5 class="modal-title" style="font-weight: 700;">Создать категорию</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <form asp-controller="Categories" asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label class="form-label small text-muted text-uppercase fw-bold">Название</label>
+                        <input name="Name" class="form-control custom-input" placeholder="Программирование" required maxlength="100" />
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small text-muted text-uppercase fw-bold">Описание (необязательно)</label>
+                        <textarea name="Description" class="form-control custom-input" rows="2" placeholder="Курсы по программированию" maxlength="500"></textarea>
+                    </div>
+                    <button type="submit" class="btn-dark-custom w-100" style="justify-content: center; padding: 14px;">Создать категорию</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

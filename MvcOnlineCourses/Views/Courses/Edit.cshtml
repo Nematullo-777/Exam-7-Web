@@ -1,0 +1,58 @@
+@model MvcOnlineCourses.ViewModels.EditCourseViewModel
+@{
+    ViewData["Title"] = "Редактировать курс";
+    var categories = ViewBag.Categories as List<Application.DTOs.CategoryDTOs.CategoryDto> ?? new();
+}
+
+<div class="main-content-wrapper">
+    <div class="mb-4">
+        <a asp-controller="Courses" asp-action="Index" class="btn-edit-custom" style="display: inline-flex; align-items: center;">
+            <i class="bi bi-arrow-left me-2"></i>Назад
+        </a>
+    </div>
+    <h2 style="font-weight: 700; color: #000; font-size: 24px; margin-bottom: 24px;">Редактировать курс</h2>
+
+    <div style="max-width: 600px; background: #fff; border-radius: 24px; padding: 32px; border: 1px solid #f0f0f0; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+        <form asp-controller="Courses" asp-action="Edit" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label class="form-label small text-muted text-uppercase fw-bold">Название</label>
+                <input asp-for="Title" class="form-control custom-input" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label small text-muted text-uppercase fw-bold">Описание</label>
+                <textarea asp-for="Description" class="form-control custom-input" rows="4"></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label small text-muted text-uppercase fw-bold">Категория</label>
+                <select asp-for="CategoryId" class="form-select custom-input">
+                    @foreach (var cat in categories)
+                    {
+                        <option value="@cat.Id">@cat.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label small text-muted text-uppercase fw-bold">Цена ($)</label>
+                    <input asp-for="Price" type="number" step="0.01" class="form-control custom-input" />
+                </div>
+                <div class="col">
+                    <label class="form-label small text-muted text-uppercase fw-bold">Уровень</label>
+                    <select asp-for="Level" class="form-select custom-input">
+                        <option value="0">Начальный</option>
+                        <option value="1">Средний</option>
+                        <option value="2">Продвинутый</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label small text-muted text-uppercase fw-bold">Новая обложка (необязательно)</label>
+                <input name="thumbnail" type="file" class="form-control custom-input" accept="image/*" />
+            </div>
+            <button type="submit" class="btn-dark-custom w-100" style="justify-content: center; padding: 14px;">Сохранить изменения</button>
+        </form>
+    </div>
+</div>
