@@ -33,7 +33,7 @@ public class EnrollmentRepository(AppDbContext context) : IEnrollmentRepository
         };
     }
 
-    public async Task<List<Enrollment>> GetByStudentIdAsync(string studentId) =>
+    public async Task<List<Enrollment>> GetByStudentIdAsync(Guid studentId) =>
         await context.Enrollments
             .Include(e => e.Course)
             .Where(e => e.StudentId == studentId)
@@ -46,11 +46,9 @@ public class EnrollmentRepository(AppDbContext context) : IEnrollmentRepository
             .Include(e => e.Student)
             .FirstOrDefaultAsync(e => e.Id == id);
 
-    public async Task<Enrollment?> GetByStudentAndCourseAsync(string studentId, Guid courseId) =>
+    public async Task<Enrollment?> GetByStudentAndCourseAsync(Guid studentId, Guid courseId) =>
         await context.Enrollments
-            .FirstOrDefaultAsync(e => e.StudentId == studentId && e.CourseId == courseId);
-
-    public async Task<Enrollment> CreateAsync(Enrollment enrollment)
+            .FirstOrDefaultAsync(e => e.StudentId == studentId && e.CourseId == courseId);    public async Task<Enrollment> CreateAsync(Enrollment enrollment)
     {
         context.Enrollments.Add(enrollment);
         await context.SaveChangesAsync();

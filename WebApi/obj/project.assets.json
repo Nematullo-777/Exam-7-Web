@@ -903,7 +903,7 @@
       },
       "Application/1.0.0": {
         "type": "project",
-        "framework": ".NETCoreApp,Version=v10.0",
+        "framework": ".NETCoreApp,Version=v9.0",
         "dependencies": {
           "Domain": "1.0.0"
         },
@@ -916,7 +916,7 @@
       },
       "Domain/1.0.0": {
         "type": "project",
-        "framework": ".NETCoreApp,Version=v10.0",
+        "framework": ".NETCoreApp,Version=v9.0",
         "dependencies": {
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "9.0.15"
         },
@@ -929,7 +929,7 @@
       },
       "Infrastructure/1.0.0": {
         "type": "project",
-        "framework": ".NETCoreApp,Version=v10.0",
+        "framework": ".NETCoreApp,Version=v9.0",
         "dependencies": {
           "Application": "1.0.0",
           "Domain": "1.0.0",
@@ -2936,11 +2936,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\user\\Desktop\\Day-17\\OnlineCourses\\WebApi\\WebApi.csproj",
+      "projectUniqueName": "C:\\Users\\user\\Desktop\\Exam-7\\OnlineCourses\\WebApi\\WebApi.csproj",
       "projectName": "WebApi",
-      "projectPath": "C:\\Users\\user\\Desktop\\Day-17\\OnlineCourses\\WebApi\\WebApi.csproj",
+      "projectPath": "C:\\Users\\user\\Desktop\\Exam-7\\OnlineCourses\\WebApi\\WebApi.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\user\\Desktop\\Day-17\\OnlineCourses\\WebApi\\obj\\",
+      "outputPath": "C:\\Users\\user\\Desktop\\Exam-7\\OnlineCourses\\WebApi\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -2955,14 +2955,14 @@
         "net10.0": {
           "targetAlias": "net10.0",
           "projectReferences": {
-            "C:\\Users\\user\\Desktop\\Day-17\\OnlineCourses\\Application\\Application.csproj": {
-              "projectPath": "C:\\Users\\user\\Desktop\\Day-17\\OnlineCourses\\Application\\Application.csproj"
+            "C:\\Users\\user\\Desktop\\Exam-7\\OnlineCourses\\Application\\Application.csproj": {
+              "projectPath": "C:\\Users\\user\\Desktop\\Exam-7\\OnlineCourses\\Application\\Application.csproj"
             },
-            "C:\\Users\\user\\Desktop\\Day-17\\OnlineCourses\\Domain\\Domain.csproj": {
-              "projectPath": "C:\\Users\\user\\Desktop\\Day-17\\OnlineCourses\\Domain\\Domain.csproj"
+            "C:\\Users\\user\\Desktop\\Exam-7\\OnlineCourses\\Domain\\Domain.csproj": {
+              "projectPath": "C:\\Users\\user\\Desktop\\Exam-7\\OnlineCourses\\Domain\\Domain.csproj"
             },
-            "C:\\Users\\user\\Desktop\\Day-17\\OnlineCourses\\Infrastructure\\Infrastructure.csproj": {
-              "projectPath": "C:\\Users\\user\\Desktop\\Day-17\\OnlineCourses\\Infrastructure\\Infrastructure.csproj"
+            "C:\\Users\\user\\Desktop\\Exam-7\\OnlineCourses\\Infrastructure\\Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\user\\Desktop\\Exam-7\\OnlineCourses\\Infrastructure\\Infrastructure.csproj"
             }
           }
         }
@@ -3017,7 +3017,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Users\\user\\.dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

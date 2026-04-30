@@ -29,7 +29,7 @@ public class EnrollmentsController(IEnrollmentService enrollmentService) : Contr
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Cancel(Guid id)
     {
-        var result = await enrollmentService.CancelEnrollmentAsync(id, UserId);
+        var result = await enrollmentService.CancelEnrollmentAsync(id,Guid.Parse(UserId));
         if (!result.IsSuccess)
             return StatusCode(result.StatusCode, new { error = result.Error });
 

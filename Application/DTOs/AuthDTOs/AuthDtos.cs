@@ -16,7 +16,7 @@ public class RegisterDto
     public string Password { get; set; } = string.Empty;
 
     [Required]
-    public string Role { get; set; } = string.Empty; // "Student" or "Instructor"
+    public string Role { get; set; } = string.Empty; // "Student" or "In
 }
 
 public class LoginDto

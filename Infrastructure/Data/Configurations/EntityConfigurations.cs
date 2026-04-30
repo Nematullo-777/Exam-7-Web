@@ -94,11 +94,18 @@ public class LessonConfiguration : IEntityTypeConfiguration<Lesson>
         builder.Property(l => l.Title)
             .IsRequired()
             .HasMaxLength(300);
+        
+        builder.Property(l => l.Description)
+            .HasColumnName("Content");
 
-        builder.Property(l => l.Content)
-            .IsRequired();
+        builder.Property(l => l.VideoUrl)
+            .HasMaxLength(500);
+
+        builder.Property(l => l.MaterialPath)
+            .HasMaxLength(500);
     }
 }
+
 
 public class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {
@@ -109,5 +116,33 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
         builder.Property(c => c.Name)
             .IsRequired()
             .HasMaxLength(100);
+    }
+}
+
+public class StudentConfiguration : IEntityTypeConfiguration<Student>
+{
+    public void Configure(EntityTypeBuilder<Student> builder)
+    {
+        builder.HasKey(s => s.Id);
+
+        builder.Property(s => s.FullName)
+            .IsRequired()
+            .HasMaxLength(200);
+
+        builder.Property(s => s.Bio)
+            .HasMaxLength(1000);
+
+        builder.Property(s => s.AvatarUrl)
+            .HasMaxLength(500);
+        
+        builder.HasOne(s => s.User)
+            .WithOne(u => u.Student)
+            .HasForeignKey<Student>(s => s.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasMany(s => s.Enrollments)
+            .WithOne()
+            .HasForeignKey(e => e.StudentId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -16,7 +16,7 @@ public class EnrollmentService(
     ICacheService _cacheService,
     ILogger<EnrollmentService> _logger) : IEnrollmentService
 {
-    public async Task<Result<EnrollmentDto>> EnrollAsync(string studentId, CreateEnrollmentDto dto)
+    public async Task<Result<EnrollmentDto>> EnrollAsync(Guid studentId, CreateEnrollmentDto dto)
     {
         var course = await _courseRepository.GetByIdAsync(dto.CourseId);
         if (course is null)
@@ -49,7 +49,12 @@ public class EnrollmentService(
         return Result<EnrollmentDto>.Success(MapToDto(created));
     }
 
-    public async Task<Result<bool>> CancelEnrollmentAsync(Guid enrollmentId, string studentId)
+    public Task<Result<EnrollmentDto>> EnrollAsync(string studentId, CreateEnrollmentDto dto)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<Result<bool>> CancelEnrollmentAsync(Guid enrollmentId, Guid studentId)
     {
         var enrollment = await _enrollmentRepository.GetByIdAsync(enrollmentId);
         if (enrollment is null)
@@ -62,7 +67,17 @@ public class EnrollmentService(
         return Result<bool>.Success(true);
     }
 
-    public async Task<Result<EnrollmentDto>> UpdateProgressAsync(Guid enrollmentId, string studentId, UpdateProgressDto dto)
+    public Task<Result<EnrollmentDto>> UpdateProgressAsync(Guid enrollmentId, string studentId, UpdateProgressDto dto)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Result<List<EnrollmentDto>>> GetMyEnrollmentsAsync(string studentId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<Result<EnrollmentDto>> UpdateProgressAsync(Guid enrollmentId, Guid studentId, UpdateProgressDto dto)
     {
         var enrollment = await _enrollmentRepository.GetByIdAsync(enrollmentId);
         if (enrollment is null)
@@ -82,7 +97,7 @@ public class EnrollmentService(
         return Result<EnrollmentDto>.Success(MapToDto(updated));
     }
 
-    public async Task<Result<List<EnrollmentDto>>> GetMyEnrollmentsAsync(string studentId)
+    public async Task<Result<List<EnrollmentDto>>> GetMyEnrollmentsAsync(Guid studentId)
     {
         var enrollments = await _enrollmentRepository.GetByStudentIdAsync(studentId);
         return Result<List<EnrollmentDto>>.Success(enrollments.Select(MapToDto).ToList());
@@ -103,7 +118,7 @@ public class EnrollmentService(
         });
     }
 
-    public async Task<Result<ReviewDto>> AddReviewAsync(Guid courseId, string studentId, CreateReviewDto dto)
+    public async Task<Result<ReviewDto>> AddReviewAsync(Guid courseId, Guid studentId, CreateReviewDto dto)
     {
         var course = await _courseRepository.GetByIdAsync(courseId);
         if (course is null)
@@ -139,7 +154,7 @@ public class EnrollmentService(
         });
     }
 
-    public async Task<Result<ReviewDto>> UpdateReviewAsync(Guid reviewId, string studentId, UpdateReviewDto dto)
+    public async Task<Result<ReviewDto>> UpdateReviewAsync(Guid reviewId, Guid studentId, UpdateReviewDto dto)
     {
         // Find the review across courses — simplified: search all loaded courses
         // In a real project, use a dedicated IReviewRepository
@@ -177,7 +192,7 @@ public class EnrollmentService(
 
         if (!isAdmin && !(isInstructor && course.InstructorId == userId))
         {
-            var enrollment = await _enrollmentRepository.GetByStudentAndCourseAsync(userId, courseId);
+            var enrollment = await _enrollmentRepository.GetByStudentAndCourseAsync(Guid.Parse(userId), courseId);
             if (enrollment is null || enrollment.Status != EnrollmentStatus.Active)
                 return Result<List<LessonDto>>.Forbidden("You must be enrolled in this course to view lessons.");
         }

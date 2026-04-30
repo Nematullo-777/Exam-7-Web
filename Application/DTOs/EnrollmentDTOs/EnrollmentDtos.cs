@@ -12,7 +12,7 @@ public class EnrollmentDto
     public int ProgressPercent { get; set; }
     public Guid CourseId { get; set; }
     public string CourseTitle { get; set; } = string.Empty;
-    public string StudentId { get; set; } = string.Empty;
+    public Guid StudentId { get; set; } = Guid.Empty;
     public string StudentName { get; set; } = string.Empty;
 }
 

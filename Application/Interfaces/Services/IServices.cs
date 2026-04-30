@@ -32,12 +32,12 @@ public interface ICourseService
 public interface IEnrollmentService
 {
     Task<Result<EnrollmentDto>> EnrollAsync(string studentId, CreateEnrollmentDto dto);
-    Task<Result<bool>> CancelEnrollmentAsync(Guid enrollmentId, string studentId);
+    Task<Result<bool>> CancelEnrollmentAsync(Guid enrollmentId, Guid studentId);
     Task<Result<EnrollmentDto>> UpdateProgressAsync(Guid enrollmentId, string studentId, UpdateProgressDto dto);
     Task<Result<List<EnrollmentDto>>> GetMyEnrollmentsAsync(string studentId);
     Task<Result<PagedResult<EnrollmentDto>>> GetAllAsync(int page, int pageSize);
-    Task<Result<ReviewDto>> AddReviewAsync(Guid courseId, string studentId, CreateReviewDto dto);
-    Task<Result<ReviewDto>> UpdateReviewAsync(Guid reviewId, string studentId, UpdateReviewDto dto);
+    Task<Result<ReviewDto>> AddReviewAsync(Guid courseId, Guid studentId, CreateReviewDto dto);
+    Task<Result<ReviewDto>> UpdateReviewAsync(Guid reviewId, Guid studentId, UpdateReviewDto dto);
     Task<Result<bool>> DeleteReviewAsync(Guid reviewId, string userId, bool isAdmin);
     Task<Result<List<ReviewDto>>> GetCourseReviewsAsync(Guid courseId);
     Task<Result<List<LessonDto>>> GetCourseLessonsAsync(Guid courseId, string userId, bool isInstructor, bool isAdmin);

@@ -12,6 +12,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Category> Categories { get; set; }
     public DbSet<Enrollment> Enrollments { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<Student> Students { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -23,5 +24,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         builder.ApplyConfiguration(new ReviewConfiguration());
         builder.ApplyConfiguration(new LessonConfiguration());
         builder.ApplyConfiguration(new CategoryConfiguration());
+        builder.ApplyConfiguration(new StudentConfiguration());
     }
 }

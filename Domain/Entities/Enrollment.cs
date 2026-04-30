@@ -12,6 +12,6 @@ public class Enrollment
 
     public Guid CourseId { get; set; }
     public Course Course { get; set; } = null!;
-    public string StudentId { get; set; } = string.Empty;
-    public ApplicationUser Student { get; set; } = null!;
+    public Guid StudentId { get; set; } = Guid.Empty;
+    public Student Student { get; set; } = null!;
 }

@@ -28,7 +28,7 @@ public class ReviewsController(IEnrollmentService enrollmentService) : Controlle
     [HttpPost]
     public async Task<IActionResult> Create(Guid courseId, [FromBody] CreateReviewDto dto)
     {
-        var result = await enrollmentService.AddReviewAsync(courseId, UserId, dto);
+        var result = await enrollmentService.AddReviewAsync(courseId, Guid.Parse(UserId), dto);
         if (!result.IsSuccess)
             return StatusCode(result.StatusCode, new { error = result.Error });
 
@@ -39,7 +39,7 @@ public class ReviewsController(IEnrollmentService enrollmentService) : Controlle
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid courseId, Guid id, [FromBody] UpdateReviewDto dto)
     {
-        var result = await enrollmentService.UpdateReviewAsync(id, UserId, dto);
+        var result = await enrollmentService.UpdateReviewAsync(id, Guid.Parse(UserId), dto);
         if (!result.IsSuccess)
             return StatusCode(result.StatusCode, new { error = result.Error });
 

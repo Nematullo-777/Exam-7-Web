@@ -1,10 +1,20 @@
-namespace Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
-public class Category
+namespace Domain.Entities
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string? Description { get; set; }
+    public class Category
+    {
+        [Key]
+        public Guid Id { get; set; }
 
-    public ICollection<Course> Courses { get; set; } = new List<Course>();
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; } = string.Empty;
+
+        [MaxLength(500)]
+        public string? Description { get; set; }
+
+        public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
+    }
 }
+
