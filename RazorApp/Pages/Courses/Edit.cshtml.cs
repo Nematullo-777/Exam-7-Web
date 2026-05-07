@@ -1,13 +1,13 @@
-using Application.DTOs.CourseDTOs;
-using Application.Interfaces.Services;
-using Domain.Constants;
-using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using OnlineCourses.Application.DTOs.Courses.Request;
+using OnlineCourses.Application.Interfaces.Services;
+using OnlineCourses.Domain.Constants;
+using OnlineCourses.Domain.Enums;
 
 namespace RazorApp.Pages.Courses;
 
@@ -29,10 +29,10 @@ public class EditModel(ICourseService courseService, ICategoryService categorySe
 
     public async Task<IActionResult> OnGetAsync(Guid id)
     {
-        var result = await courseService.GetByIdAsync(id);
+        var result = await courseService.GetCourseByIdAsync(id);
         if (!result.IsSuccess) return NotFound();
 
-        var c = result.Value!;
+        var c = result.Data!;
         Input = new InputModel
         {
             Id = c.Id, Title = c.Title, Description = c.Description,
@@ -48,7 +48,7 @@ public class EditModel(ICourseService courseService, ICategoryService categorySe
         if (!ModelState.IsValid) { await PopulateCategoriesAsync(); return Page(); }
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-        var result = await courseService.UpdateAsync(Input.Id, userId, new UpdateCourseDto
+        var result = await courseService.UpdateCourseAsync(Input.Id, new UpdateCourseDto
         {
             Title = Input.Title, Description = Input.Description,
             Price = Input.Price, Level = Input.Level, CategoryId = Input.CategoryId
@@ -66,7 +66,7 @@ public class EditModel(ICourseService courseService, ICategoryService categorySe
 
     private async Task PopulateCategoriesAsync()
     {
-        var cats = await categoryService.GetAllAsync();
-        CategoryOptions = new SelectList(cats.Value, "Id", "Name");
+        var cats = await categoryService.GetAllCategoriesAsync();
+        CategoryOptions = new SelectList(cats.Error, "Id", "Name");
     }
 }

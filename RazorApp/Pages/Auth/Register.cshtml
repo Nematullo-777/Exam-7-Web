@@ -1,0 +1,55 @@
+@page
+@model NewRazorApp.Pages.Auth.RegisterModel
+@{ ViewData["Title"] = "Регистрация"; }
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon" style="background:var(--success)"><i class="bi bi-person-plus"></i></div>
+            <h4>Создать аккаунт</h4>
+            <p class="text-muted small mb-0">Присоединяйтесь к платформе</p>
+        </div>
+        <div class="auth-body">
+            @if (Model.Error != null)
+            {
+                <div class="alert alert-danger mb-4">
+                    <i class="bi bi-exclamation-circle"></i> @Model.Error
+                </div>
+            }
+            @if (Model.Success)
+            {
+                <div class="alert alert-success mb-4">
+                    <i class="bi bi-check-circle"></i> Аккаунт создан! <a href="/Auth/Login">Войти</a>
+                </div>
+            }
+            <form method="post">
+                <div class="mb-3">
+                    <label class="form-label">Полное имя</label>
+                    <input class="form-control" name="fullName" placeholder="Иван Иванов" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Имя пользователя</label>
+                    <input class="form-control" name="userName" placeholder="ivan_ivanov" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input class="form-control" type="email" name="email" placeholder="you@example.com" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Пароль</label>
+                    <input class="form-control" type="password" name="password" placeholder="Минимум 6 символов" />
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Подтвердите пароль</label>
+                    <input class="form-control" type="password" name="confirmPassword" placeholder="Повторите пароль" />
+                </div>
+                <button type="submit" class="btn btn-success w-100" style="justify-content:center;padding:.7rem">
+                    <i class="bi bi-person-check"></i> Создать аккаунт
+                </button>
+            </form>
+        </div>
+        <div class="auth-footer">
+            Уже есть аккаунт? <a href="/Auth/Login">Войти</a>
+        </div>
+    </div>
+</div>

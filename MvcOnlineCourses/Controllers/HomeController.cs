@@ -1,22 +1,16 @@
-using Application.Interfaces.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NewMvcApp.Services;
 
-namespace MvcOnlineCourses.Controllers;
+namespace NewMvcApp.Controllers;
 
-[Authorize]
-public class HomeController(IDashboardService dashboardService) : Controller
+public class HomeController : Controller
 {
+    private readonly ApiService _api;
+    public HomeController(ApiService api) => _api = api;
+
     public async Task<IActionResult> Index()
     {
-        var summary = await dashboardService.GetSummaryAsync();
-        var topCourses = await dashboardService.GetTopCoursesAsync();
-        var byMonth = await dashboardService.GetEnrollmentsByMonthAsync();
-
-        ViewBag.Summary = summary.Value;
-        ViewBag.TopCourses = topCourses.Value;
-        ViewBag.ByMonth = byMonth.Value;
-
-        return View();
+        var courses = await _api.GetCoursesAsync();
+        return View(courses?.Data ?? new());
     }
 }

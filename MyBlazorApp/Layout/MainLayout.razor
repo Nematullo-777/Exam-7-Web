@@ -1,0 +1,152 @@
+@inherits LayoutComponentBase
+@inject ApiService Api
+@inject NavigationManager Nav
+@implements IDisposable
+
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <i class="bi bi-mortarboard-fill"></i>
+            EduPlatform
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-label">Навигация</div>
+                @* Match="NavLinkMatch.All" нужен для главной, чтобы она не была активной всегда *@
+                <NavLink class="nav-item" href="/" Match="NavLinkMatch.All">
+                    <i class="bi bi-house-fill"></i> <span>Главная</span>
+                </NavLink>
+                <NavLink class="nav-item" href="/courses">
+                    <i class="bi bi-book-fill"></i> <span>Курсы</span>
+                </NavLink>
+                <NavLink class="nav-item" href="/categories">
+                    <i class="bi bi-tags-fill"></i> <span>Категории</span>
+                </NavLink>
+            </div>
+
+            @if (Api.IsInstructor)
+            {
+                <div class="nav-section">
+                    <div class="nav-label">Инструктор</div>
+                    <NavLink class="nav-item" href="/instructor">
+                        <i class="bi bi-person-video3"></i> <span>Мои курсы</span>
+                    </NavLink>
+                    <NavLink class="nav-item" href="/instructor/lessons">
+                        <i class="bi bi-collection-play-fill"></i> <span>Уроки</span>
+                    </NavLink>
+                    <NavLink class="nav-item" href="/instructor/stats">
+                        <i class="bi bi-bar-chart-fill"></i> <span>Статистика</span>
+                    </NavLink>
+                </div>
+            }
+
+            @if (Api.IsAdmin)
+            {
+                <div class="nav-section">
+                    <div class="nav-label">Администратор</div>
+                    <NavLink class="nav-item" href="/admin" Match="NavLinkMatch.All">
+                        <i class="bi bi-speedometer2"></i> <span>Дашборд</span>
+                    </NavLink>
+                    <NavLink class="nav-item" href="/admin/users">
+                        <i class="bi bi-people-fill"></i> <span>Пользователи</span>
+                    </NavLink>
+                    <NavLink class="nav-item" href="/admin/courses">
+                        <i class="bi bi-journals"></i> <span>Все курсы</span>
+                    </NavLink>
+                    <NavLink class="nav-item" href="/admin/categories">
+                        <i class="bi bi-folder-fill"></i> <span>Категории</span>
+                    </NavLink>
+                </div>
+            }
+
+            <div class="nav-section">
+                <div class="nav-label">Аккаунт</div>
+                @if (Api.CurrentUser != null)
+                {
+                    <button class="nav-item" @onclick="Logout">
+                        <i class="bi bi-box-arrow-right"></i> <span>Выход</span>
+                    </button>
+                }
+                else
+                {
+                    <NavLink class="nav-item" href="/login">
+                        <i class="bi bi-box-arrow-in-right"></i> <span>Войти</span>
+                    </NavLink>
+                    <NavLink class="nav-item" href="/register">
+                        <i class="bi bi-person-plus-fill"></i> <span>Регистрация</span>
+                    </NavLink>
+                }
+            </div>
+        </nav>
+
+        @if (Api.CurrentUser != null)
+        {
+            <div class="sidebar-user">
+                <div class="user-avatar">@Api.CurrentUser.FullName[0]</div>
+                <div class="user-info">
+                    <div class="user-name">@Api.CurrentUser.FullName</div>
+                    <div class="user-role">@Api.CurrentUser.Role</div>
+                </div>
+            </div>
+        }
+    </aside>
+
+    <div class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">@PageTitle</div>
+            <div class="topbar-actions">
+                @if (Api.CurrentUser == null)
+                {
+                    <a href="/login" class="btn btn-primary btn-sm"><i class="bi bi-box-arrow-in-right"></i> Войти</a>
+                }
+            </div>
+        </header>
+        <div class="page-content">
+            @Body
+        </div>
+    </div>
+</div>
+
+@code {
+    string PageTitle => Nav.Uri switch
+    {
+        var u when u.Contains("/admin/users") => "Пользователи",
+        var u when u.Contains("/admin/courses") => "Все курсы",
+        var u when u.Contains("/admin/categories") => "Категории (Admin)",
+        var u when u.Contains("/admin") => "Дашборд",
+        var u when u.Contains("/instructor/lessons") => "Управление уроками",
+        var u when u.Contains("/instructor/stats") => "Статистика",
+        var u when u.Contains("/instructor") => "Панель инструктора",
+        var u when u.Contains("/courses/") => "Детали курса",
+        var u when u.Contains("/courses") => "Курсы",
+        var u when u.Contains("/categories") => "Категории",
+        var u when u.Contains("/login") => "Вход",
+        var u when u.Contains("/register") => "Регистрация",
+        _ => "EduPlatform"
+    };
+
+    protected override void OnInitialized() 
+    { 
+        Api.OnChange += StateHasChanged; 
+        // Подписываемся на изменение адреса, чтобы обновлять заголовок и активные ссылки
+        Nav.LocationChanged += HandleLocationChanged; 
+    }
+
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    void Logout() 
+    { 
+        Api.Logout(); 
+        Nav.NavigateTo("/login"); 
+    }
+
+    public void Dispose() 
+    { 
+        Api.OnChange -= StateHasChanged; 
+        Nav.LocationChanged -= HandleLocationChanged;
+    }
+}

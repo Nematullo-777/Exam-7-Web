@@ -1,0 +1,10 @@
+C:\Users\user\Desktop\Day-19\OnlineCourses\MyBlazorApp\obj\Debug\net10.0\EmbeddedAttribute.cs
+C:\Users\user\Desktop\Day-19\OnlineCourses\MyBlazorApp\obj\Debug\net10.0\ValidatableTypeAttribute.cs
+C:\Users\user\Desktop\Day-19\OnlineCourses\MyBlazorApp\obj\Debug\net10.0\NewBlazorApp.csproj.AssemblyReference.cache
+C:\Users\user\Desktop\Day-19\OnlineCourses\MyBlazorApp\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\user\Desktop\Day-19\OnlineCourses\MyBlazorApp\obj\Debug\net10.0\NewBlazorApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\Desktop\Day-19\OnlineCourses\MyBlazorApp\obj\Debug\net10.0\NewBlazorApp.AssemblyInfoInputs.cache
+C:\Users\user\Desktop\Day-19\OnlineCourses\MyBlazorApp\obj\Debug\net10.0\NewBlazorApp.AssemblyInfo.cs
+C:\Users\user\Desktop\Day-19\OnlineCourses\MyBlazorApp\obj\Debug\net10.0\NewBlazorApp.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\Day-19\OnlineCourses\MyBlazorApp\obj\Debug\net10.0\NewBlazorApp.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\user\Desktop\Day-19\OnlineCourses\MyBlazorApp\obj\Debug\net10.0\NewBlazorApp.sourcelink.json

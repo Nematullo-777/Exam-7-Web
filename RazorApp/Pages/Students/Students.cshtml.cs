@@ -1,54 +1,57 @@
-using Application.Common;
-using Application.DTOs.StudentDTOs;
-using Application.Interfaces.Services;
-using Domain.Constants;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using NewRazorApp.Models;
+using NewRazorApp.Services;
 
-namespace RazorApp.Pages.Students;
+namespace NewRazorApp.Pages.Students;
 
-[Authorize(Roles = UserRoles.Admin)]
-public class IndexModel(IStudentService studentService) : PageModel
+[Authorize(Roles = "Admin")]
+public class IndexModel : PageModel
 {
-    public PagedResult<StudentDto> Students { get; set; } = new();
-    [BindProperty(SupportsGet = true)] public int CurrentPage { get; set; } = 1;
+    private readonly ApiService _api;
+    public List<StudentDto> Students { get; set; } = new();
+
+    public IndexModel(ApiService api) => _api = api;
 
     public async Task OnGetAsync()
     {
-        var result = await studentService.GetAllAsync(CurrentPage, 10);
-        Students = result.Value ?? new PagedResult<StudentDto>();
+        var result = await _api.GetStudentsAsync();
+        Students = result?.Data ?? new();
     }
 
     public async Task<IActionResult> OnPostDeleteAsync(string id)
     {
-        await studentService.DeleteAsync(id);
-        TempData["Success"] = "Student deleted.";
+        await _api.DeleteStudentAsync(id);
+        TempData["Success"] = "Студент удалён.";
         return RedirectToPage();
     }
 }
 
-[Authorize]
-public class DetailsModel(IStudentService studentService) : PageModel
+public class DetailsModel : PageModel
 {
+    private readonly ApiService _api;
     public StudentDto? Student { get; set; }
+
+    public DetailsModel(ApiService api) => _api = api;
 
     public async Task<IActionResult> OnGetAsync(string id)
     {
-        var result = await studentService.GetByIdAsync(id);
-        if (!result.IsSuccess) return NotFound();
-
-        Student = result.Value;
+        var result = await _api.GetStudentAsync(id);
+        if (result?.IsSuccess != true) return NotFound();
+        Student = result.Data;
         return Page();
     }
 }
 
-[Authorize]
-public class EditModel(IStudentService studentService) : PageModel
+public class EditModel : PageModel
 {
+    private readonly ApiService _api;
     [BindProperty] public InputModel Input { get; set; } = new();
+
+    public EditModel(ApiService api) => _api = api;
 
     public class InputModel
     {
@@ -60,14 +63,10 @@ public class EditModel(IStudentService studentService) : PageModel
 
     public async Task<IActionResult> OnGetAsync(string id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-        var isAdmin = User.IsInRole(UserRoles.Admin);
-        if (!isAdmin && id != userId) return Forbid();
+        var result = await _api.GetStudentAsync(id);
+        if (result?.IsSuccess != true) return NotFound();
 
-        var result = await studentService.GetByIdAsync(id);
-        if (!result.IsSuccess) return NotFound();
-
-        var s = result.Value!;
+        var s = result.Data!;
         Input = new InputModel { Id = s.Id, FullName = s.FullName, Bio = s.Bio, AvatarUrl = s.AvatarUrl };
         return Page();
     }
@@ -76,19 +75,16 @@ public class EditModel(IStudentService studentService) : PageModel
     {
         if (!ModelState.IsValid) return Page();
 
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-        var isAdmin = User.IsInRole(UserRoles.Admin);
-
-        var result = await studentService.UpdateAsync(Input.Id, userId, isAdmin, new UpdateStudentDto
+        var result = await _api.UpdateStudentAsync(Input.Id, new UpdateStudentDto
         {
             FullName = Input.FullName,
             Bio = Input.Bio,
             AvatarUrl = Input.AvatarUrl
         });
 
-        if (!result.IsSuccess)
+        if (!result?.IsSuccess == true)
         {
-            ModelState.AddModelError("", result.Error!);
+            ModelState.AddModelError("", result?.Error ?? "Ошибка");
             return Page();
         }
 

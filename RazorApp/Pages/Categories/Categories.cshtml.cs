@@ -1,27 +1,30 @@
-using Application.DTOs.CategoryDTOs;
-using Application.Interfaces.Services;
-using Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
+using NewRazorApp.Models;
+using OnlineCourses.Application.DTOs.Categories.Request;
+using OnlineCourses.Application.DTOs.Categories.Response;
+using OnlineCourses.Application.Interfaces.Services;
+using OnlineCourses.Domain.Constants;
+using CreateCategoryDto = OnlineCourses.Application.DTOs.Categories.Request.CreateCategoryDto;
 
 namespace RazorApp.Pages.Categories;
 
 [Authorize(Roles = UserRoles.Admin)]
 public class IndexModel(ICategoryService categoryService) : PageModel
 {
-    public List<CategoryDto> Categories { get; set; } = new();
+    public List<GetCategoryDto> Categories { get; set; } = new();
 
     public async Task OnGetAsync()
     {
-        var result = await categoryService.GetAllAsync();
-        Categories = result.Value ?? new List<CategoryDto>();
+        var result = await categoryService.GetAllCategoriesAsync();
+        Categories = result.Data ?? new List<GetCategoryDto>();
     }
 
     public async Task<IActionResult> OnPostDeleteAsync(Guid id)
     {
-        var result = await categoryService.DeleteAsync(id);
+        var result = await categoryService.DeleteCategoryAsync(id);
         if (!result.IsSuccess)
             TempData["Error"] = result.Error;
         else
@@ -48,12 +51,12 @@ public class CreateModel(ICategoryService categoryService) : PageModel
     {
         if (!ModelState.IsValid) return Page();
 
-        var result = await categoryService.CreateAsync(new CreateCategoryDto
+        var result = await categoryService.CreateCategoryAsync(new CreateCategoryDto
         {
             Name = Input.Name,
             Description = Input.Description
         });
-
+        
         if (!result.IsSuccess)
         {
             ModelState.AddModelError("", result.Error!);
@@ -78,10 +81,10 @@ public class EditModel(ICategoryService categoryService) : PageModel
 
     public async Task<IActionResult> OnGetAsync(Guid id)
     {
-        var result = await categoryService.GetByIdAsync(id);
+        var result = await categoryService.GetCategoryByIdAsync(id);
         if (!result.IsSuccess) return NotFound();
 
-        var c = result.Value!;
+        var c = result.Data!;
         Input = new InputModel { Id = c.Id, Name = c.Name, Description = c.Description };
         return Page();
     }
@@ -90,7 +93,7 @@ public class EditModel(ICategoryService categoryService) : PageModel
     {
         if (!ModelState.IsValid) return Page();
 
-        var result = await categoryService.UpdateAsync(Input.Id, new UpdateCategoryDto
+        var result = await categoryService.UpdateCategoryAsync(Input.Id, new UpdateCategoryDto
         {
             Name = Input.Name,
             Description = Input.Description

@@ -1,0 +1,135 @@
+@model CourseDto
+@{ ViewData["Title"] = Model.Title; }
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Index">Курсы</a></li>
+        <li class="breadcrumb-item active">@Model.Title</li>
+    </ol>
+</nav>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="d-flex gap-2 mb-3 flex-wrap">
+            <span class="badge bg-primary">@Model.Level</span>
+            <span class="badge bg-secondary">@Model.CategoryName</span>
+            @if (!Model.IsPublished)
+            {
+                <span class="status-pill draft"><i class="bi bi-pencil"></i> Черновик</span>
+            }
+            else
+            {
+                <span class="status-pill published"><i class="bi bi-check-circle"></i> Опубликован</span>
+            }
+        </div>
+
+        <h1 class="fw-800 mb-2" style="font-size:clamp(1.4rem,3vw,2rem)">@Model.Title</h1>
+        <p class="text-muted mb-4">@Model.Description</p>
+
+        <!-- Stats row -->
+        <div class="row g-3 mb-4">
+            <div class="col-4">
+                <div class="stat-block">
+                    <span class="stat-val">@Model.Price.ToString("C")</span>
+                    <div class="stat-label">Цена</div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="stat-block">
+                    <span class="stat-val" style="color:#f59e0b">
+                        <i class="bi bi-star-fill" style="font-size:1.2rem"></i>
+                        @Model.AverageRating.ToString("F1")
+                    </span>
+                    <div class="stat-label">Рейтинг</div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="stat-block">
+                    <span class="stat-val">@Model.LessonCount</span>
+                    <div class="stat-label">Уроков</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lessons -->
+        <h5 class="fw-700 mb-3"><i class="bi bi-collection me-2 text-brand"></i>Уроки</h5>
+        @{
+            var lessons = ViewBag.Lessons as List<LessonDto> ?? new();
+        }
+        @if (lessons.Any())
+        {
+            <div class="list-group mb-4">
+                @foreach (var l in lessons.OrderBy(x => x.Order))
+                {
+                    <div class="list-group-item d-flex align-items-center gap-3">
+                        <span class="badge-count">@l.Order</span>
+                        <div class="flex-grow-1">
+                            <strong>@l.Title</strong>
+                            @if (!string.IsNullOrEmpty(l.Description))
+                            {
+                                <div class="text-muted small">@l.Description</div>
+                            }
+                        </div>
+                        @if (!string.IsNullOrEmpty(l.VideoUrl))
+                        {
+                            <a href="@l.VideoUrl" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-play-circle"></i>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state py-3">
+                <i class="bi bi-journal-x" style="font-size:2rem"></i>
+                <p class="mt-2 mb-0">Уроки ещё не добавлены</p>
+            </div>
+        }
+    </div>
+
+    <div class="col-lg-4">
+        @if (!string.IsNullOrEmpty(Model.ThumbnailPath))
+        {
+            <img src="@Model.ThumbnailPath" class="img-fluid rounded-xl shadow-card mb-3" alt="@Model.Title" />
+        }
+        <div class="sidebar-card mb-3">
+            <div class="sidebar-row">
+                <i class="bi bi-person"></i>
+                <div>
+                    <span class="sidebar-label">Преподаватель</span>
+                    <span class="sidebar-val">@Model.InstructorName</span>
+                </div>
+            </div>
+            <div class="sidebar-row">
+                <i class="bi bi-calendar3"></i>
+                <div>
+                    <span class="sidebar-label">Дата создания</span>
+                    <span class="sidebar-val">@Model.CreatedAt.ToString("dd.MM.yyyy")</span>
+                </div>
+            </div>
+            <div class="sidebar-row">
+                <i class="bi bi-collection"></i>
+                <div>
+                    <span class="sidebar-label">Количество уроков</span>
+                    <span class="sidebar-val">@Model.LessonCount</span>
+                </div>
+            </div>
+            <div class="sidebar-row">
+                <i class="bi bi-cash-stack"></i>
+                <div>
+                    <span class="sidebar-label">Цена</span>
+                    <span class="sidebar-val">@Model.Price.ToString("C")</span>
+                </div>
+            </div>
+        </div>
+        @if (Context.Session.GetString("jwt") != null)
+        {
+            <a asp-controller="Lessons" asp-action="Index" asp-route-courseId="@Model.Id"
+               class="btn btn-primary w-100" style="justify-content:center">
+                <i class="bi bi-collection-play"></i> Управление уроками
+            </a>
+        }
+    </div>
+</div>

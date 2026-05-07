@@ -1,0 +1,45 @@
+@page "/register"
+@inject ApiService Api
+@inject NavigationManager Nav
+
+<PageTitle>Регистрация — EduPlatform</PageTitle>
+
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <i class="bi bi-person-plus-fill"></i>
+            <h2>Создать аккаунт</h2>
+            <p>Начни обучение прямо сейчас</p>
+        </div>
+
+        @if (_error != null) { <div class="alert alert-danger"><i class="bi bi-exclamation-circle"></i> @_error</div> }
+        @if (_ok) { <div class="alert alert-success"><i class="bi bi-check-circle"></i> Аккаунт создан! <a href="/login">Войти</a></div> }
+        else
+        {
+            <div class="form-group"><label class="form-label">Полное имя</label><input class="form-control" @bind="_dto.FullName" placeholder="Иван Иванов" /></div>
+            <div class="form-group"><label class="form-label">Username</label><input class="form-control" @bind="_dto.UserName" placeholder="ivan_ivanov" /></div>
+            <div class="form-group"><label class="form-label">Email</label><input class="form-control" type="email" @bind="_dto.Email" /></div>
+            <div class="form-group"><label class="form-label">Пароль</label><input class="form-control" type="password" @bind="_dto.Password" /></div>
+            <div class="form-group"><label class="form-label">Подтверждение пароля</label><input class="form-control" type="password" @bind="_dto.ConfirmPassword" /></div>
+            <button class="btn btn-primary w-100" @onclick="DoReg" disabled="@_loading" style="margin-top:8px">
+                @if (_loading) { <div class="spinner" style="width:16px;height:16px;border-width:2px"></div> } Зарегистрироваться
+            </button>
+            <div class="divider"></div>
+            <div style="text-align:center;font-size:0.875rem;color:var(--text-muted)">Есть аккаунт? <a href="/login">Войти</a></div>
+        }
+    </div>
+</div>
+
+@code {
+    RegisterDto _dto = new();
+    string? _error; bool _ok, _loading;
+
+    async Task DoReg()
+    {
+        if (_dto.Password != _dto.ConfirmPassword) { _error = "Пароли не совпадают"; return; }
+        _loading = true; _error = null;
+        var (ok, err) = await Api.RegisterAsync(_dto);
+        if (ok) _ok = true; else _error = err ?? "Ошибка";
+        _loading = false;
+    }
+}

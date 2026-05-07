@@ -1,84 +1,82 @@
+@model List<CourseDto>
+@{ ViewData["Title"] = "Главная"; }
+
+<div class="hero">
+    <h1><i class="bi bi-mortarboard-fill me-2"></i>Платформа онлайн-курсов</h1>
+    <p class="lead">Учись у лучших преподавателей, развивайся и достигай новых высот</p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+        <a asp-controller="Courses" asp-action="Index" class="btn btn-primary btn-lg">
+            <i class="bi bi-book"></i> Все курсы
+        </a>
+        @if (Context.Session.GetString("jwt") == null)
+        {
+            <a asp-controller="Auth" asp-action="Register" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-person-plus"></i> Начать бесплатно
+            </a>
+        }
+    </div>
+</div>
+
 @{
-    ViewData["Title"] = "Dashboard";
-    var summary = ViewBag.Summary as Application.DTOs.DashboardSummaryDto;
-    var topCourses = ViewBag.TopCourses as List<Application.DTOs.TopCourseDto>;
+    var published = Model.Where(x => x.IsPublished).Take(6).ToList();
 }
 
-<div class="main-content-wrapper">
-    <div class="d-flex justify-content-between align-items-center mb-5">
+@if (published.Any())
+{
+    <div class="page-header">
         <div>
-            <h2 style="font-weight: 700; color: #000; margin: 0; font-size: 28px;">Dashboard</h2>
-            <p style="color: #9197b3; font-size: 14px; margin-top: 5px;">Добро пожаловать в EduPortal</p>
+            <h2>Популярные курсы</h2>
+            <div class="page-title-sub">Выбраны редакцией платформы</div>
         </div>
+        <a asp-controller="Courses" asp-action="Index" class="btn btn-outline-primary btn-sm">
+            Все курсы <i class="bi bi-arrow-right"></i>
+        </a>
     </div>
 
-    @if (summary != null)
-    {
-        <div class="row g-4 mb-5">
-            <div class="col-6 col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #ede9fe; color: #5932ea;">
-                        <i class="bi bi-collection-play-fill"></i>
-                    </div>
-                    <div class="stat-value">@summary.TotalCourses</div>
-                    <div class="stat-label">Курсов</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #dcfce7; color: #16a34a;">
-                        <i class="bi bi-people-fill"></i>
-                    </div>
-                    <div class="stat-value">@summary.TotalStudents</div>
-                    <div class="stat-label">Студентов</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #fef9c3; color: #ca8a04;">
-                        <i class="bi bi-journal-bookmark-fill"></i>
-                    </div>
-                    <div class="stat-value">@summary.TotalEnrollments</div>
-                    <div class="stat-label">Записей</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #fee2e2; color: #dc2626;">
-                        <i class="bi bi-currency-dollar"></i>
-                    </div>
-                    <div class="stat-value">@summary.TotalRevenue.ToString("N0")</div>
-                    <div class="stat-label">Выручка ($)</div>
-                </div>
-            </div>
-        </div>
-    }
-
-    @if (topCourses != null && topCourses.Any())
-    {
-        <h5 style="font-weight: 700; color: #111827; margin-bottom: 16px;">Топ курсов по записям</h5>
-        <div class="table-card">
-            <table class="table table-hover mb-0">
-                <thead>
-                    <tr>
-                        <th>Курс</th>
-                        <th>Инструктор</th>
-                        <th>Записей</th>
-                        <th>Выручка</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var c in topCourses)
+    <div class="row g-4">
+        @foreach (var c in published)
+        {
+            <div class="col-md-4 animate-fade-up">
+                <div class="card h-100">
+                    @if (!string.IsNullOrEmpty(c.ThumbnailPath))
                     {
-                        <tr>
-                            <td><strong>@c.Title</strong></td>
-                            <td><span class="text-muted">@c.InstructorName</span></td>
-                            <td><span class="badge-count">@c.EnrollmentCount</span></td>
-                            <td><strong>$@c.Revenue.ToString("N0")</strong></td>
-                        </tr>
+                        <img src="@c.ThumbnailPath" class="card-img-top" alt="@c.Title" />
                     }
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
+                    else
+                    {
+                        <div class="course-thumb-placeholder">
+                            <i class="bi bi-book"></i>
+                        </div>
+                    }
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex gap-1 mb-2">
+                            <span class="badge bg-primary">@c.Level</span>
+                            <span class="badge bg-secondary">@c.CategoryName</span>
+                        </div>
+                        <h5 class="card-title">@c.Title</h5>
+                        <p class="text-muted small flex-grow-1">
+                            @(c.Description?.Length > 90 ? c.Description[..90] + "…" : c.Description)
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
+                            <span class="fw-700 text-brand" style="font-size:1.1rem">@c.Price.ToString("C")</span>
+                            <span class="d-flex align-items-center gap-1" style="color:#f59e0b;font-weight:600">
+                                <i class="bi bi-star-fill"></i> @c.AverageRating.ToString("F1")
+                            </span>
+                        </div>
+                        <a asp-controller="Courses" asp-action="Details" asp-route-id="@c.Id"
+                           class="btn btn-outline-primary w-100">
+                            Подробнее <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <i class="bi bi-journal-x"></i>
+        <p>Курсы пока не добавлены</p>
+    </div>
+}

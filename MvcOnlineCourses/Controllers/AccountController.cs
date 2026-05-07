@@ -1,13 +1,18 @@
-using Application.DTOs.AuthDTOs;
-using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MvcOnlineCourses.ViewModels;
+using NewMvcApp.Models;
+using NewMvcApp.Services;
+using OnlineCourses.Application.Interfaces.Services;
 
 namespace MvcOnlineCourses.Controllers;
 
 public class AccountController(IAuthService authService) : Controller
 {
+    private readonly ApiService _api;
+    
+    
+
     [HttpGet]
     [AllowAnonymous]
     public IActionResult Login() => View();
@@ -18,26 +23,22 @@ public class AccountController(IAuthService authService) : Controller
     {
         if (!ModelState.IsValid) return View(model);
 
-        var result = await authService.LoginAsync(new LoginDto
+        var result = await _api.LoginAsync(new NewMvcApp.Models.LoginDto
         {
             Email = model.Email,
             Password = model.Password
         });
 
-        if (!result.IsSuccess)
+        if (result?.IsSuccess == true && result.Data != null)
         {
-            ModelState.AddModelError("", "Неверный email или пароль");
-            return View(model);
+            HttpContext.Session.SetString("jwt", result.Data.Token);
+            HttpContext.Session.SetString("userName", result.Data.FullName);
+            HttpContext.Session.SetString("role", result.Data.Role);
+            return RedirectToAction("Index", "Home");
         }
 
-        Response.Cookies.Append("jwt", result.Value!, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = false, // в dev false, в prod true
-            Expires = DateTime.UtcNow.AddHours(3)
-        });
-
-        return RedirectToAction("Index", "Courses");
+        ModelState.AddModelError("", result?.Error ?? "Неверный email или пароль");
+        return View(model);
     }
 
     [HttpGet]
@@ -50,46 +51,41 @@ public class AccountController(IAuthService authService) : Controller
     {
         if (!ModelState.IsValid) return View(model);
 
-        var result = await authService.RegisterAsync(new RegisterDto
+        var result = await _api.RegisterAsync(new NewMvcApp.Models.RegisterDto
         {
             FullName = model.FullName,
             Email = model.Email,
             Password = model.Password,
-            ConfirmPassword = model.Password,
-            Role = model.Role
+            ConfirmPassword = model.Password
         });
 
-        if (!result.IsSuccess)
+        if (result?.IsSuccess == true)
         {
-            ModelState.AddModelError("", result.Error ?? "Ошибка регистрации");
-            return View(model);
-        }
-        
-        var loginResult = await authService.LoginAsync(new LoginDto
-        {
-            Email = model.Email,
-            Password = model.Password
-        });
-
-        if (loginResult.IsSuccess)
-        {
-            Response.Cookies.Append("jwt", loginResult.Value!, new CookieOptions
+            var loginResult = await _api.LoginAsync(new NewMvcApp.Models.LoginDto
             {
-                HttpOnly = true,
-                Secure = false,
-                Expires = DateTime.UtcNow.AddHours(3)
+                Email = model.Email,
+                Password = model.Password
             });
-            
-            return RedirectToAction("Index", "Courses");
+
+            if (loginResult?.IsSuccess == true && loginResult.Data != null)
+            {
+                HttpContext.Session.SetString("jwt", loginResult.Data.Token);
+                HttpContext.Session.SetString("userName", loginResult.Data.FullName);
+                HttpContext.Session.SetString("role", loginResult.Data.Role);
+                return RedirectToAction("Index", "Home");
+            }
+
+            return RedirectToAction("Login");
         }
-        
-        return RedirectToAction("Login");
+
+        ModelState.AddModelError("", result?.Error ?? "Ошибка регистрации");
+        return View(model);
     }
 
     [HttpPost]
     public IActionResult Logout()
     {
-        Response.Cookies.Delete("jwt");
+        HttpContext.Session.Clear();
         return RedirectToAction("Login");
     }
 }

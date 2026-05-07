@@ -1,0 +1,100 @@
+@page "/categories"
+@inject ApiService Api
+
+<PageTitle>Категории — EduPlatform</PageTitle>
+
+<div class="page-header">
+    <h2>Категории</h2>
+    @if (Api.IsAdmin) { <button class="btn btn-primary" @onclick="() => _show = true"><i class="bi bi-plus-lg"></i> Добавить</button> }
+</div>
+
+@if (_show)
+{
+    <div class="modal-backdrop" @onclick="() => _show = false">
+        <div class="modal" @onclick:stopPropagation>
+            <div class="modal-header"><span class="modal-title">Новая категория</span><button class="btn-icon" @onclick="() => _show = false"><i class="bi bi-x-lg"></i></button></div>
+            @if (_err != null) { <div class="alert alert-danger">@_err</div> }
+            <div class="form-group"><label class="form-label">Название</label><input class="form-control" @bind="_name" /></div>
+            <div class="form-group"><label class="form-label">Описание</label><textarea class="form-control" @bind="_desc"></textarea></div>
+            <div class="d-flex gap-2"><button class="btn btn-primary flex-1" @onclick="Create">Создать</button><button class="btn btn-secondary" @onclick="() => _show = false">Отмена</button></div>
+        </div>
+    </div>
+}
+
+@if (_loading) { <div class="loading-center"><div class="spinner"></div></div> }
+else
+{
+    <div class="grid grid-3">
+        @foreach (var c in _cats)
+        {
+            <div class="card d-flex align-center gap-3" style="padding:20px">
+                <div class="stat-icon" style="background:var(--primary-light);color:var(--primary)"><i class="bi bi-tag-fill"></i></div>
+                <div style="flex:1">
+                    <div class="fw-600">@c.Name</div>
+                    @if (!string.IsNullOrEmpty(c.Description)) { <div class="text-muted fs-sm">@c.Description</div> }
+                </div>
+                @if (Api.IsAdmin) { <button class="btn-icon" @onclick="() => Del(c.Id)" title="Удалить"><i class="bi bi-trash" style="color:var(--danger)"></i></button> }
+            </div>
+        }
+    </div>
+    @if (!_cats.Any()) { <div class="empty-state"><i class="bi bi-tags"></i><h4>Категорий пока нет</h4></div> }
+}
+
+@code {
+
+    List<GetCategoryDto> _cats = new();
+
+    bool _loading = true;
+
+    bool _show;
+
+    string _name = "";
+
+    string _desc = "";
+
+    string? _err;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var r = await Api.GetCategoriesAsync();
+
+        _cats = r?.Data ?? new List<GetCategoryDto>();
+
+        _loading = false;
+    }
+
+    async Task Create()
+    {
+        _err = null;
+
+        var r = await Api.CreateCategoryAsync(new CreateCategoryDto
+        {
+            Name = _name,
+            Description = _desc
+        });
+
+        if (r?.IsSuccess == true)
+        {
+            _show = false;
+
+            _name = "";
+
+            _desc = "";
+
+            var res = await Api.GetCategoriesAsync();
+
+            _cats = res?.Data ?? new List<GetCategoryDto>();
+        }
+        else
+        {
+            _err = r?.Error ?? "Ошибка";
+        }
+    }
+
+    async Task Del(Guid id)
+    {
+        await Api.DeleteCategoryAsync(id);
+
+        _cats.RemoveAll(x => x.Id == id);
+    }
+}

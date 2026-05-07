@@ -1,0 +1,14 @@
+@inject NavigationManager Nav
+
+<a href="@Href" class="nav-item @(IsActive ? "active" : "")">
+    <i class="bi @Icon"></i>
+    @Label
+</a>
+
+@code {
+    [Parameter] public string Href { get; set; } = "/";
+    [Parameter] public string Icon { get; set; } = "";
+    [Parameter] public string Label { get; set; } = "";
+
+    bool IsActive => Href == "/" ? Nav.Uri == Nav.BaseUri : Nav.Uri.Contains(Href.TrimStart('/'));
+}

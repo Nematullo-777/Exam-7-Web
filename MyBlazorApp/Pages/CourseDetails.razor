@@ -1,0 +1,261 @@
+@page "/courses/{Id:guid}"
+@inject ApiService Api
+
+<PageTitle>@(_course?.Title ?? "Курс")</PageTitle>
+
+@if (_loading) { <div class="loading-center"><div class="spinner"></div></div> }
+else if (_course == null) { <div class="alert alert-danger"><i class="bi bi-exclamation-circle"></i> Курс не найден</div> }
+else
+{
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start">
+        <div>
+            <div style="margin-bottom:8px"><a href="/courses" class="text-muted fs-sm"><i class="bi bi-arrow-left"></i> Курсы</a></div>
+            <h2 style="font-size:1.8rem;font-weight:800;margin-bottom:12px">@_course.Title</h2>
+            <div class="d-flex gap-2 mb-2">
+                <span class="badge badge-primary">@_course.Level</span>
+                <span class="badge badge-secondary">@_course.CategoryName</span>
+                @if (!_course.IsPublished) { <span class="badge badge-warning">Черновик</span> }
+            </div>
+            <p class="text-muted" style="line-height:1.7;margin-bottom:24px">@_course.Description</p>
+
+            <div class="grid grid-4 mb-3" style="gap:12px">
+                <div class="card" style="text-align:center;padding:16px">
+                    <div class="text-primary fw-700" style="font-size:1.4rem">@_course.Price.ToString("C")</div>
+                    <div class="text-muted fs-sm">Цена</div>
+                </div>
+                <div class="card" style="text-align:center;padding:16px">
+                    <div style="font-size:1.4rem;font-weight:700;color:var(--warning)"><i class="bi bi-star-fill"></i> @_course.AverageRating.ToString("F1")</div>
+                    <div class="text-muted fs-sm">Рейтинг</div>
+                </div>
+                <div class="card" style="text-align:center;padding:16px">
+                    <div style="font-size:1.4rem;font-weight:700">@_course.LessonCount</div>
+                    <div class="text-muted fs-sm">Уроков</div>
+                </div>
+                <div class="card" style="text-align:center;padding:16px">
+                    <div style="font-size:1rem;font-weight:600">@_course.CreatedAt.ToString("dd.MM.yy")</div>
+                    <div class="text-muted fs-sm">Создан</div>
+                </div>
+            </div>
+
+            <h4 style="font-weight:700;margin-bottom:12px"><i class="bi bi-collection-play me-2"></i>Программа курса</h4>
+            @if (_showAdd)
+            {
+                <div class="card mb-3" style="padding:20px">
+                    <h5 class="fw-700 mb-2">Новый урок</h5>
+
+                    @if (_lessonErr != null)
+                    {
+                        <div class="alert alert-danger">@_lessonErr</div>
+                    }
+
+                    <div class="form-group">
+                        <label class="form-label">Название</label>
+                        <input class="form-control" @bind="_lessonDto.Title" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Описание</label>
+                        <textarea class="form-control" @bind="_lessonDto.Description"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Порядок</label>
+                        <input type="number" class="form-control" @bind="_lessonDto.Order" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Видео URL</label>
+                        <input class="form-control" @bind="_lessonDto.VideoUrl" />
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" @onclick="AddLesson">
+                            Сохранить
+                        </button>
+
+                        <button class="btn btn-secondary" @onclick="() => _showAdd = false">
+                            Отмена
+                        </button>
+                    </div>
+                </div>
+            }
+            @if (_editMode)
+            {
+                <div class="card mb-3" style="padding:20px">
+                    <h5>Редактировать урок</h5>
+
+                    <input class="form-control mb-2" @bind="_editDto.Title" placeholder="Название" />
+                    <textarea class="form-control mb-2" @bind="_editDto.Description" placeholder="Описание"></textarea>
+                    <input class="form-control mb-2" type="number" @bind="_editDto.Order" />
+                    <input class="form-control mb-2" @bind="_editDto.VideoUrl" placeholder="Видео URL" />
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" @onclick="UpdateLesson">Сохранить</button>
+                        <button class="btn btn-secondary" @onclick="CancelEdit">Отмена</button>
+                    </div>
+                </div>
+            }
+            @if (Api.IsInstructor || Api.IsAdmin)
+            {
+                <div style="margin-bottom:12px">
+                    <button class="btn btn-primary" @onclick="() => _showAdd = true">
+                        <i class="bi bi-plus-lg"></i> Добавить урок
+                    </button>
+                </div>
+            }
+            @if (_lessons.Any())
+            {
+                <div style="display:flex;flex-direction:column;gap:8px">
+                    @foreach (var l in _lessons.OrderBy(x => x.Order))
+                    {
+                        <div class="card" style="padding:14px 16px;display:flex;align-items:center;gap:12px">
+                            <div style="width:32px;height:32px;background:var(--primary-light);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:700;font-size:0.85rem;flex-shrink:0">@l.Order</div>
+                            <div style="flex:1">
+                                <div style="font-weight:600;font-size:0.9rem">@l.Title</div>
+                                @if (!string.IsNullOrEmpty(l.Description)) { <div class="text-muted fs-sm">@l.Description</div> }
+                            </div>
+                            @if (!string.IsNullOrEmpty(l.VideoUrl)) { <a href="@l.VideoUrl" target="_blank" class="btn-icon"><i class="bi bi-play-fill"></i></a> }
+                            <div class="d-flex gap-2">
+    
+                                <button class="btn-icon" @onclick="() => StartEdit(l)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+
+                                <button class="btn-icon" @onclick="() => DeleteLesson(l.Id)">
+                                    <i class="bi bi-trash" style="color:var(--danger)"></i>
+                                </button>
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else { <div class="empty-state"><i class="bi bi-collection"></i><h4>Уроки не добавлены</h4></div> }
+        </div>
+
+        <div style="position:sticky;top:80px">
+            <div class="card" style="padding:24px">
+                <h5 class="fw-700 mb-2">Об инструкторе</h5>
+                <div class="d-flex align-center gap-2 mb-3">
+                    <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-weight:700">
+                        @(_course.InstructorName.FirstOrDefault())
+                    </div>
+                    <div>
+                        <div class="fw-600">@_course.InstructorName</div>
+                        <div class="text-muted fs-sm">Инструктор</div>
+                    </div>
+                </div>
+                <button class="btn btn-primary w-100"><i class="bi bi-bookmark-plus"></i> Записаться на курс</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    GetCourseDto? _course;
+
+    List<GetLessonDto> _lessons = new();
+
+    bool _loading = true;
+    
+    bool _showAdd;
+    CreateLessonDto _lessonDto = new();
+    string? _lessonErr;
+    
+    bool _editMode;
+
+    UpdateLessonDto _editDto = new();
+
+    Guid _editId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var r = await Api.GetCourseByIdAsync(Id);
+
+        _course = r?.Data;
+
+        var lr = await Api.GetLessonsByCourseAsync(Id);
+
+        _lessons = lr?.Data ?? new List<GetLessonDto>();
+
+        _loading = false;
+    }
+    
+    async Task AddLesson()
+    {
+        _lessonErr = null;
+
+        if (_course == null)
+        {
+            _lessonErr = "Курс не найден";
+            return;
+        }
+
+        _lessonDto.CourseId = _course.Id;
+
+        var r = await Api.CreateLessonAsync(_course.Id, _lessonDto);
+
+        if (r?.IsSuccess == true)
+        {
+            _showAdd = false;
+            _lessonDto = new CreateLessonDto();
+
+            var lr = await Api.GetLessonsByCourseAsync(_course.Id);
+            _lessons = lr?.Data ?? new();
+        }
+        else
+        {
+            _lessonErr = r?.Error ?? "Ошибка создания урока";
+        }
+    }
+    
+    void StartEdit(GetLessonDto l)
+    {
+        _editMode = true;
+
+        _editId = l.Id;
+
+        _editDto = new UpdateLessonDto
+        {
+            Title = l.Title,
+            Description = l.Description,
+            Order = l.Order,
+            VideoUrl = l.VideoUrl
+        };
+    }
+    
+    async Task UpdateLesson()
+    {
+        if (_course == null) return;
+
+        var r = await Api.UpdateLessonAsync(_course.Id, _editId, _editDto);
+
+        if (r?.IsSuccess == true)
+        {
+            _editMode = false;
+
+            var lr = await Api.GetLessonsByCourseAsync(_course.Id);
+            _lessons = lr?.Data ?? new();
+        }
+    }
+    
+    async Task DeleteLesson(Guid id)
+    {
+        if (_course == null) return;
+
+        await Api.DeleteLessonAsync(_course.Id, id);
+
+        _lessons.RemoveAll(x => x.Id == id);
+    }
+    
+    void CancelEdit()
+    {
+        _editMode = false;
+        _editId = Guid.Empty;
+        _editDto = new UpdateLessonDto();
+    }
+}

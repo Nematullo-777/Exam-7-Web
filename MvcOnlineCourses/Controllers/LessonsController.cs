@@ -1,10 +1,11 @@
-using Application.DTOs.LessonDTOs;
-using Application.Interfaces.Services;
-using Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MvcOnlineCourses.ViewModels;
 using System.Security.Claims;
+using NewMvcApp.Models;
+using NewMvcApp.Services;
+using OnlineCourses.Application.Interfaces.Services;
+using OnlineCourses.Domain.Constants;
 
 namespace MvcOnlineCourses.Controllers;
 
@@ -17,49 +18,38 @@ public class LessonsController(
     private bool IsAdmin => User.IsInRole(UserRoles.Admin);
     private bool IsInstructor => User.IsInRole(UserRoles.Instructor);
 
-    [HttpGet]
+    private readonly ApiService _api;
+
     public async Task<IActionResult> Index(Guid courseId)
     {
-        var course = await courseService.GetByIdAsync(courseId);
-        if (!course.IsSuccess) return NotFound();
+        var course = await _api.GetCourseAsync(courseId);
+        if (course?.IsSuccess != true) return NotFound();
 
-        var lessons = await lessonService.GetByCourseIdAsync(courseId);
-        ViewBag.Course = course.Value;
-        return View(lessons.Value ?? new List<LessonDto>());
+        var lessons = await _api.GetLessonsAsync(courseId);
+        ViewBag.Course = course.Data;
+        return View(lessons?.Data ?? new());
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Details(Guid id, Guid courseId)
-    {
-        var result = await lessonService.GetByIdAsync(id);
-        if (!result.IsSuccess) return NotFound();
-        ViewBag.CourseId = courseId;
-        return View(result.Value);
-    }
-
-    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Instructor}")]
     [HttpGet]
     public async Task<IActionResult> Create(Guid courseId)
     {
-        var course = await courseService.GetByIdAsync(courseId);
-        if (!course.IsSuccess) return NotFound();
-        ViewBag.Course = course.Value;
+        var course = await _api.GetCourseAsync(courseId);
+        if (course?.IsSuccess != true) return NotFound();
+        ViewBag.Course = course.Data;
         return View(new CreateLessonViewModel { CourseId = courseId });
     }
 
-    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Instructor}")]
     [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateLessonViewModel vm)
     {
         if (!ModelState.IsValid)
         {
-            var course = await courseService.GetByIdAsync(vm.CourseId);
-            ViewBag.Course = course.Value;
+            var c = await _api.GetCourseAsync(vm.CourseId);
+            ViewBag.Course = c?.Data;
             return View(vm);
         }
 
-        var result = await lessonService.CreateAsync(vm.CourseId, UserId, new CreateLessonDto
+        var result = await _api.CreateLessonAsync(vm.CourseId, new CreateLessonDto
         {
             Title = vm.Title,
             Content = vm.Content,
@@ -68,57 +58,39 @@ public class LessonsController(
             DurationMinutes = vm.DurationMinutes
         });
 
-        if (!result.IsSuccess)
-        {
-            ModelState.AddModelError("", result.Error ?? "Ошибка при создании урока");
-            var course = await courseService.GetByIdAsync(vm.CourseId);
-            ViewBag.Course = course.Value;
-            return View(vm);
-        }
+        if (result?.IsSuccess == true) return RedirectToAction("Index", new { courseId = vm.CourseId });
 
-        return RedirectToAction("Index", new { courseId = vm.CourseId });
+        ModelState.AddModelError("", result?.Error ?? "Ошибка");
+        var course = await _api.GetCourseAsync(vm.CourseId);
+        ViewBag.Course = course?.Data;
+        return View(vm);
     }
 
     [HttpGet]
     public async Task<IActionResult> Edit(Guid id, Guid courseId)
     {
-        var result = await lessonService.GetByIdAsync(id);
-        if (!result.IsSuccess) return NotFound();
+        var result = await _api.GetLessonAsync(id);
+        if (result?.IsSuccess != true) return NotFound();
 
-        var lesson = result.Value!;
-
-        var course = await courseService.GetByIdAsync(courseId);
-        if (!course.IsSuccess) return NotFound();
-
-        if (!IsAdmin && course.Value!.InstructorId != UserId)
-            return Forbid();
-
-        ViewBag.Course = course.Value;
-
+        var lesson = result.Data!;
         return View(new EditLessonViewModel
         {
             Id = lesson.Id,
             CourseId = courseId,
             Title = lesson.Title,
-            Content = lesson.Content,
+            Content = lesson.Description ?? "",
             VideoUrl = lesson.VideoUrl,
             Order = lesson.Order,
-            DurationMinutes = lesson.DurationMinutes
+            DurationMinutes = 0
         });
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(EditLessonViewModel vm)
     {
-        if (!ModelState.IsValid)
-        {
-            var course = await courseService.GetByIdAsync(vm.CourseId);
-            ViewBag.Course = course.Value;
-            return View(vm);
-        }
+        if (!ModelState.IsValid) return View(vm);
 
-        var result = await lessonService.UpdateAsync(vm.Id, UserId, IsAdmin, new UpdateLessonDto
+        var result = await _api.UpdateLessonAsync(vm.Id, new UpdateLessonDto
         {
             Title = vm.Title,
             Content = vm.Content,
@@ -127,22 +99,16 @@ public class LessonsController(
             DurationMinutes = vm.DurationMinutes
         });
 
-        if (!result.IsSuccess)
-        {
-            ModelState.AddModelError("", result.Error ?? "Ошибка при обновлении урока");
-            var course = await courseService.GetByIdAsync(vm.CourseId);
-            ViewBag.Course = course.Value;
-            return View(vm);
-        }
+        if (result?.IsSuccess == true) return RedirectToAction("Index", new { courseId = vm.CourseId });
 
-        return RedirectToAction("Index", new { courseId = vm.CourseId });
+        ModelState.AddModelError("", result?.Error ?? "Ошибка");
+        return View(vm);
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid id, Guid courseId)
     {
-        await lessonService.DeleteAsync(id, UserId, IsAdmin);
+        await _api.DeleteLessonAsync(id);
         return RedirectToAction("Index", new { courseId });
     }
 }

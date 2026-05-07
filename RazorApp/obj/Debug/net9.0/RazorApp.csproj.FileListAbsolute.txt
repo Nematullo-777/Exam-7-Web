@@ -96,3 +96,15 @@ C:\Users\user\Desktop\Exam-7\OnlineCourses\RazorApp\obj\Debug\net9.0\refint\Razo
 C:\Users\user\Desktop\Exam-7\OnlineCourses\RazorApp\obj\Debug\net9.0\RazorApp.pdb
 C:\Users\user\Desktop\Exam-7\OnlineCourses\RazorApp\obj\Debug\net9.0\RazorApp.genruntimeconfig.cache
 C:\Users\user\Desktop\Exam-7\OnlineCourses\RazorApp\obj\Debug\net9.0\ref\RazorApp.dll
+C:\Users\user\Desktop\Day-19\OnlineCourses\RazorApp\obj\Debug\net9.0\rpswa.dswa.cache.json
+C:\Users\user\Desktop\Day-19\OnlineCourses\RazorApp\obj\Debug\net9.0\RazorApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\Desktop\Day-19\OnlineCourses\RazorApp\obj\Debug\net9.0\RazorApp.AssemblyInfoInputs.cache
+C:\Users\user\Desktop\Day-19\OnlineCourses\RazorApp\obj\Debug\net9.0\RazorApp.AssemblyInfo.cs
+C:\Users\user\Desktop\Day-19\OnlineCourses\RazorApp\obj\Debug\net9.0\RazorApp.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\Day-19\OnlineCourses\RazorApp\obj\Debug\net9.0\RazorApp.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\user\Desktop\Day-19\OnlineCourses\RazorApp\obj\Debug\net9.0\RazorApp.RazorAssemblyInfo.cache
+C:\Users\user\Desktop\Day-19\OnlineCourses\RazorApp\obj\Debug\net9.0\RazorApp.RazorAssemblyInfo.cs
+C:\Users\user\Desktop\Day-19\OnlineCourses\RazorApp\obj\Debug\net9.0\RazorApp.sourcelink.json
+C:\Users\user\Desktop\Day-19\OnlineCourses\RazorApp\obj\Debug\net9.0\RazorApp.dll
+C:\Users\user\Desktop\Day-19\OnlineCourses\RazorApp\obj\Debug\net9.0\refint\RazorApp.dll
+C:\Users\user\Desktop\Day-19\OnlineCourses\RazorApp\obj\Debug\net9.0\RazorApp.pdb

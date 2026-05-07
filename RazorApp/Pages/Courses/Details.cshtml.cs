@@ -1,20 +1,21 @@
-using Application.DTOs.CourseDTOs;
-using Application.Interfaces.Services;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using NewRazorApp.Models;
+using NewRazorApp.Services;
 
-namespace RazorApp.Pages.Courses;
+namespace NewRazorApp.Pages.Courses;
 
-public class DetailsModel(ICourseService courseService) : PageModel
+public class DetailsModel : PageModel
 {
+    private readonly ApiService _api;
     public CourseDto? Course { get; set; }
+    public List<LessonDto> Lessons { get; set; } = new();
+    public DetailsModel(ApiService api) => _api = api;
 
-    public async Task<IActionResult> OnGetAsync(Guid id)
+    public async Task OnGetAsync(Guid id)
     {
-        var result = await courseService.GetByIdAsync(id);
-        if (!result.IsSuccess) return NotFound();
-
-        Course = result.Value;
-        return Page();
+        var r = await _api.GetCourseAsync(id);
+        Course = r?.Data;
+        var lr = await _api.GetLessonsAsync(id);
+        Lessons = lr?.Data ?? new();
     }
 }

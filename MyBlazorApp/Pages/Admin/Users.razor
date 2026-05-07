@@ -1,0 +1,136 @@
+@page "/admin/users"
+@inject ApiService Api
+@inject NavigationManager Nav
+
+<PageTitle>Пользователи — Admin</PageTitle>
+
+@if (!Api.IsAdmin) { Nav.NavigateTo("/"); return; }
+
+<div class="page-header">
+    <h2>Пользователи</h2>
+    <input class="form-control" style="width:220px" placeholder="🔍 Поиск..." @bind="_search" @bind:event="oninput" />
+</div>
+
+@if (_loading) { <div class="loading-center"><div class="spinner"></div></div> }
+else
+{
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Пользователь</th><th>Email</th><th>Username</th><th>Роль</th><th>Действия</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Filtered)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-center gap-2">
+                                <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;flex-shrink:0">@u.FullName.FirstOrDefault()</div>
+                                <div class="fw-600">@u.FullName</div>
+                            </div>
+                        </td>
+                        <td class="text-muted fs-sm">@u.Email</td>
+                        <td class="text-muted fs-sm">@u.Username</td>
+                        <td><span class="badge @RoleBadge(u.Role)">@u.Role</span></td>
+                        <td>
+                            <div class="d-flex gap-2 align-center">
+                                <select class="form-select form-select-sm" 
+                                        style="width: 130px"
+                                        value="@u.Role" 
+                                        @onchange="@(async (e) => await UpdateRole(u, e.Value?.ToString()))"
+                                        disabled="@(_processingId == u.Id)">
+                                    <option value="Student">Student</option>
+                                    <option value="Instructor">Instructor</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
+        
+                                @if (_processingId == u.Id)
+                                {
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn-icon" title="Редактировать"><i class="bi bi-pencil"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (!Filtered.Any()) { <div class="empty-state"><i class="bi bi-people"></i><h4>Пользователи не найдены</h4></div> }
+}
+
+@code {
+
+    List<GetStudentDto> _users = new();
+
+    bool _loading = true;
+
+    string _search = "";
+        
+    private string? _processingId; // Храним ID пользователя, чья роль сейчас обновляется
+
+    IEnumerable<GetStudentDto> Filtered => _users.Where(u =>
+        string.IsNullOrWhiteSpace(_search) ||
+        u.FullName.Contains(_search, StringComparison.OrdinalIgnoreCase) ||
+        u.Email.Contains(_search, StringComparison.OrdinalIgnoreCase));
+
+    protected override async Task OnInitializedAsync()
+    {
+        var r = await Api.GetStudentsAsync();
+
+        _users = r?.Data ?? new List<GetStudentDto>();
+
+        _loading = false;
+    }
+
+    static string RoleBadge(string r) => r switch
+    {
+        "Admin" => "badge-danger",
+        "Instructor" => "badge-info",
+        "Student" => "badge-secondary",
+        _ => "badge-secondary"
+    };
+
+        private async Task UpdateRole(GetStudentDto user, string newRole)
+        {
+            if (string.IsNullOrEmpty(newRole) || user.Role == newRole) return;
+
+            // Подтверждение для смены на Admin (безопасность)
+            if (newRole == "Admin")
+            {
+                // Можно использовать JS Interop для простого подтверждения
+                // if (!await JS.InvokeAsync<bool>("confirm", $"Назначить {user.FullName} администратором?")) return;
+            }
+
+            _processingId = user.Id; // Включаем индикатор загрузки для этой строки
+
+            try 
+            {
+                // Вызываем метод API (его нужно добавить в ApiService)
+                var result = await Api.UpdateUserRoleAsync(user.Id, newRole);
+
+                if (result.IsSuccess) 
+                {
+                    user.Role = newRole; // Обновляем локально в списке
+                    // Здесь можно добавить уведомление об успехе
+                }
+                else 
+                {
+                    // Обработка ошибки (например, вывести сообщение)
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при смене роли: {ex.Message}");
+            }
+            finally 
+            {
+                _processingId = null; // Выключаем индикатор
+            }
+        }
+    
+}

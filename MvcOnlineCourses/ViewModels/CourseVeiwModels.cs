@@ -1,5 +1,5 @@
-﻿using Domain.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using OnlineCourses.Domain.Enums;
 
 namespace MvcOnlineCourses.ViewModels;
 

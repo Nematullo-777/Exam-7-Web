@@ -1,0 +1,49 @@
+@page
+@model NewRazorApp.Pages.Courses.IndexModel
+@{ ViewData["Title"] = "Курсы"; }
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-book me-2"></i>Курсы</h2>
+    @if (Model.HttpContext.Session.GetString("jwt") != null)
+    {
+        <a href="/Courses/Create" class="btn btn-dark"><i class="bi bi-plus-circle me-1"></i>Добавить</a>
+    }
+</div>
+
+<div class="row g-4">
+    @foreach (var c in Model.Courses)
+    {
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 @(c.IsPublished ? "" : "opacity-75")">
+                <div class="bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center" style="height:140px">
+                    <i class="bi bi-book" style="font-size:2.5rem"></i>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex gap-1 mb-2">
+                        <span class="badge bg-dark">@c.Level</span>
+                        <span class="badge bg-secondary">@c.CategoryName</span>
+                        @if (!c.IsPublished) { <span class="badge bg-warning text-dark">Черновик</span> }
+                    </div>
+                    <h6>@c.Title</h6>
+                    <p class="small text-muted">@c.InstructorName</p>
+                </div>
+                <div class="card-footer bg-transparent d-flex gap-1">
+                    <a href="/Courses/Details?id=@c.Id" class="btn btn-sm btn-outline-dark flex-grow-1">Детали</a>
+                    @if (Model.HttpContext.Session.GetString("jwt") != null)
+                    {
+                        <form method="post" asp-page-handler="Toggle" class="m-0">
+                            <input type="hidden" name="id" value="@c.Id" />
+                            <button class="btn btn-sm @(c.IsPublished ? "btn-outline-warning" : "btn-outline-success")">
+                                <i class="bi @(c.IsPublished ? "bi-eye-slash" : "bi-check-circle")"></i>
+                            </button>
+                        </form>
+                        <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Удалить?')" class="m-0">
+                            <input type="hidden" name="id" value="@c.Id" />
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

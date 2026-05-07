@@ -1,9 +1,9 @@
-using Application.DTOs.AuthDTOs;
-using Application.Interfaces.Services;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.ComponentModel.DataAnnotations;
+using OnlineCourses.Application.DTOs.Auth.Request;
+using OnlineCourses.Application.Interfaces.Services;
 
 namespace RazorApp.Pages.Account;
 
@@ -40,7 +40,7 @@ public class LoginModel(IAuthService authService) : PageModel
             return Page();
         }
 
-        Response.Cookies.Append("jwt", result.Value!, new CookieOptions
+        Response.Cookies.Append("jwt", result.Error!, new CookieOptions
         {
             HttpOnly = true,
             Secure = true,

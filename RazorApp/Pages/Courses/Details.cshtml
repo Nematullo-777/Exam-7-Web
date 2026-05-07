@@ -1,0 +1,49 @@
+@page
+@model NewRazorApp.Pages.Courses.DetailsModel
+@{ ViewData["Title"] = Model.Course?.Title ?? "Курс"; }
+
+@if (Model.Course == null) { <div class="alert alert-warning">Курс не найден</div> }
+else
+{
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="/Courses">Курсы</a></li><li class="breadcrumb-item active">@Model.Course.Title</li></ol></nav>
+    <div class="row">
+        <div class="col-md-8">
+            <h2 class="fw-bold">@Model.Course.Title</h2>
+            <div class="d-flex gap-2 mb-3">
+                <span class="badge bg-dark fs-6">@Model.Course.Level</span>
+                <span class="badge bg-secondary fs-6">@Model.Course.CategoryName</span>
+                @if (!Model.Course.IsPublished) { <span class="badge bg-warning text-dark fs-6">Черновик</span> }
+            </div>
+            <p class="text-muted">@Model.Course.Description</p>
+            <div class="row g-3 mb-4">
+                <div class="col-4"><div class="text-center p-3 bg-light rounded"><div class="fw-bold fs-5">@Model.Course.Price.ToString("C")</div><small class="text-muted">Цена</small></div></div>
+                <div class="col-4"><div class="text-center p-3 bg-light rounded"><div class="fw-bold text-warning fs-5"><i class="bi bi-star-fill"></i> @Model.Course.AverageRating.ToString("F1")</div><small class="text-muted">Рейтинг</small></div></div>
+                <div class="col-4"><div class="text-center p-3 bg-light rounded"><div class="fw-bold fs-5">@Model.Course.LessonCount</div><small class="text-muted">Уроков</small></div></div>
+            </div>
+            <h5><i class="bi bi-collection me-2"></i>Уроки</h5>
+            @if (Model.Lessons.Any())
+            {
+                <div class="list-group">
+                    @foreach (var l in Model.Lessons.OrderBy(x => x.Order))
+                    {
+                        <div class="list-group-item d-flex align-items-center gap-3">
+                            <span class="badge bg-dark rounded-pill">@l.Order</span>
+                            <div><strong>@l.Title</strong>@if (!string.IsNullOrEmpty(l.Description)) { <br/><small class="text-muted">@l.Description</small> }</div>
+                        </div>
+                    }
+                </div>
+            }
+            else { <div class="alert alert-info">Уроки ещё не добавлены</div> }
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted"><i class="bi bi-person me-1"></i>Преподаватель</h6>
+                    <p class="fw-bold">@Model.Course.InstructorName</p>
+                    <h6 class="text-muted"><i class="bi bi-calendar me-1"></i>Создан</h6>
+                    <p>@Model.Course.CreatedAt.ToString("dd.MM.yyyy")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}

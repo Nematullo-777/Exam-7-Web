@@ -1,7 +1,8 @@
+@using OnlineCourses.Application.DTOs.Categories.Response
 @model MvcOnlineCourses.ViewModels.EditCourseViewModel
 @{
     ViewData["Title"] = "Редактировать курс";
-    var categories = ViewBag.Categories as List<Application.DTOs.CategoryDTOs.CategoryDto> ?? new();
+    var categories = ViewBag.Categories as List<GetCategoryDto> ?? new();
 }
 
 <div class="main-content-wrapper">

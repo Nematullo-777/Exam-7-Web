@@ -1,177 +1,60 @@
-using Application.DTOs.CourseDTOs;
-using Application.Interfaces.Services;
-using Domain.Constants;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MvcOnlineCourses.ViewModels;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using NewMvcApp.Models;
+using NewMvcApp.Services;
 
-namespace MvcOnlineCourses.Controllers;
+namespace NewMvcApp.Controllers;
 
-[Authorize]
-public class CoursesController(
-    ICourseService courseService,
-    ICategoryService categoryService) : Controller
+public class CoursesController : Controller
 {
-    private string UserId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-    private bool IsAdmin => User.IsInRole(UserRoles.Admin);
-    private bool IsInstructor => User.IsInRole(UserRoles.Instructor);
+    private readonly ApiService _api;
+    public CoursesController(ApiService api) => _api = api;
 
-    [HttpGet]
-    public async Task<IActionResult> Index(string? search, Guid? categoryId, bool? isPublished)
+    public async Task<IActionResult> Index()
     {
-        var filter = new CourseFilterDto
-        {
-            Search = search,
-            CategoryId = categoryId,
-            IsPublished = isPublished,
-            PageSize = 50
-        };
-
-        var result = await courseService.GetAllAsync(filter);
-        var categories = await categoryService.GetAllAsync();
-
-        ViewBag.Categories = categories.Value ?? new List<Application.DTOs.CategoryDTOs.CategoryDto>();
-        ViewBag.Search = search;
-        ViewBag.SelectedCategory = categoryId;
-        ViewBag.IsPublished = isPublished;
-
-        return View(result.Value?.Items ?? new List<CourseDto>());
+        var result = await _api.GetCoursesAsync();
+        return View(result?.Data ?? new());
     }
 
-    [HttpGet]
     public async Task<IActionResult> Details(Guid id)
     {
-        var result = await courseService.GetByIdAsync(id);
-        if (!result.IsSuccess) return NotFound();
-        return View(result.Value);
+        var course = await _api.GetCourseAsync(id);
+        if (course?.IsSuccess != true) return NotFound();
+        var lessons = await _api.GetLessonsAsync(id);
+        ViewBag.Lessons = lessons?.Data ?? new();
+        return View(course.Data);
     }
 
-    [Authorize(Roles = $"{UserRoles.Instructor},{UserRoles.Admin}")]
     [HttpGet]
     public async Task<IActionResult> Create()
     {
-        await PopulateCategoriesAsync();
+        var cats = await _api.GetCategoriesAsync();
+        ViewBag.Categories = cats?.Data ?? new();
         return View();
     }
 
-    [Authorize(Roles = $"{UserRoles.Instructor},{UserRoles.Admin}")]
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateCourseViewModel vm, IFormFile? thumbnail)
+    public async Task<IActionResult> Create(CreateCourseDto dto)
     {
-        if (!ModelState.IsValid)
-        {
-            var cats = await categoryService.GetAllAsync();
-            ViewBag.Categories = cats.Value ?? new List<Application.DTOs.CategoryDTOs.CategoryDto>();
-            return View(vm);
-        }
-
-        var result = await courseService.CreateAsync(UserId, new CreateCourseDto
-        {
-            Title = vm.Title,
-            Description = vm.Description,
-            Price = vm.Price,
-            Level = vm.Level,
-            CategoryId = vm.CategoryId
-        });
-
-        if (!result.IsSuccess)
-        {
-            ModelState.AddModelError("", result.Error ?? "Ошибка при создании курса");
-            var cats = await categoryService.GetAllAsync();
-            ViewBag.Categories = cats.Value ?? new List<Application.DTOs.CategoryDTOs.CategoryDto>();
-            return View(vm);
-        }
-
-        if (thumbnail != null)
-            await courseService.UploadThumbnailAsync(result.Value!.Id, UserId, thumbnail);
-
-        return RedirectToAction("Index");
-    }
-
-    [Authorize(Roles = $"{UserRoles.Instructor},{UserRoles.Admin}")]
-    [HttpGet]
-    public async Task<IActionResult> Edit(Guid id)
-    {
-        var result = await courseService.GetByIdAsync(id);
-        if (!result.IsSuccess) return NotFound();
-
-        var course = result.Value!;
-
-        if (!IsAdmin && course.InstructorId != UserId)
-            return Forbid();
-
-        var categories = await categoryService.GetAllAsync();
-        ViewBag.Categories = categories.Value ?? new List<Application.DTOs.CategoryDTOs.CategoryDto>();
-
-        return View(new EditCourseViewModel
-        {
-            Id = course.Id,
-            Title = course.Title,
-            Description = course.Description,
-            Price = course.Price,
-            Level = course.Level,
-            CategoryId = course.CategoryId,
-        });
+        var result = await _api.CreateCourseAsync(dto);
+        if (result?.IsSuccess == true)
+            return RedirectToAction("Index");
+        ViewBag.Error = result?.Error ?? "Ошибка";
+        var cats = await _api.GetCategoriesAsync();
+        ViewBag.Categories = cats?.Data ?? new();
+        return View(dto);
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(EditCourseViewModel vm, IFormFile? thumbnail)
-    {
-        if (!ModelState.IsValid)
-        {
-            var cats = await categoryService.GetAllAsync();
-            ViewBag.Categories = cats.Value ?? new List<Application.DTOs.CategoryDTOs.CategoryDto>();
-            return View(vm);
-        }
-
-        var result = await courseService.UpdateAsync(vm.Id, UserId, new UpdateCourseDto
-        {
-            Title = vm.Title,
-            Description = vm.Description,
-            Price = vm.Price,
-            Level = vm.Level,
-            CategoryId = vm.CategoryId,
-        });
-
-        if (!result.IsSuccess)
-        {
-            ModelState.AddModelError("", result.Error ?? "Ошибка");
-            var cats = await categoryService.GetAllAsync();
-            ViewBag.Categories = cats.Value ?? new List<Application.DTOs.CategoryDTOs.CategoryDto>();
-            return View(vm);
-        }
-
-        if (thumbnail != null)
-            await courseService.UploadThumbnailAsync(vm.Id, UserId, thumbnail);
-
-        return RedirectToAction("Index");
-    }
-    
-    [Authorize(Roles = $"{UserRoles.Instructor},{UserRoles.Admin}")]
-    [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid id)
     {
-        await courseService.DeleteAsync(id, UserId, IsAdmin);
+        await _api.DeleteCourseAsync(id);
         return RedirectToAction("Index");
     }
 
-    [Authorize(Roles = $"{UserRoles.Instructor},{UserRoles.Admin}")]
     [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> TogglePublish(Guid id)
     {
-        await courseService.TogglePublishAsync(id, UserId);
+        await _api.TogglePublishAsync(id);
         return RedirectToAction("Index");
-    }
-    
-    private async Task PopulateCategoriesAsync()
-    {
-        var cats = await categoryService.GetAllAsync();
-        ViewBag.Categories = new SelectList(cats.Value, "Id", "Name");
     }
 }

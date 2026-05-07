@@ -1,56 +1,54 @@
-﻿@model MvcOnlineCourses.ViewModels.CreateCourseViewModel
+@model CreateCourseDto
+@{ ViewData["Title"] = "Создать курс"; }
 
-@{
-    ViewData["Title"] = "Создать курс";
-}
-
-<div class="container mt-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-white">
-            <h3 class="mb-0">Добавить новый курс</h3>
-        </div>
-        <div class="card-body">
-            @* Указываем контроллер и экшн явно *@
-            <form asp-controller="Courses" asp-action="Create" method="post" enctype="multipart/form-data">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                <div class="mb-3">
-                    <label asp-for="Title" class="form-label">Название курса</label>
-                    <input asp-for="Title" class="form-control" />
-                    <span asp-validation-for="Title" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Description" class="form-label">Описание</label>
-                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="Price" class="form-label">Цена</label>
-                        <input asp-for="Price" class="form-control" type="number" step="0.01" />
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Новый курс</h5>
+            </div>
+            <div class="card-body p-4">
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger">@ViewBag.Error</div>
+                }
+                <form asp-action="Create" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label">Название *</label>
+                        <input asp-for="Title" class="form-control" required />
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="CategoryId" class="form-label">Категория</label>
-                        @* Используем ViewBag.Categories, который мы наполнили в контроллере *@
-                        <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
-                            <option value="">-- Выберите категорию --</option>
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">Описание</label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Price" class="form-label">Цена</label>
+                        <input asp-for="Price" class="form-control" type="number" step="0.01" min="0" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Level" class="form-label">Уровень</label>
+                        <select asp-for="Level" class="form-select">
+                            <option value="0">Начинающий</option>
+                            <option value="1">Средний</option>
+                            <option value="2">Продвинутый</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Обложка</label>
-                    @* Важно: name="Thumbnail" должен совпадать с именем параметра в методе POST контроллера *@
-                    <input type="file" name="Thumbnail" class="form-control" />
-                </div>
-
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Создать</button>
-                    <a asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
-                </div>
-            </form>
+                    <div class="mb-3">
+                        <label asp-for="CategoryId" class="form-label">Категория *</label>
+                        <select asp-for="CategoryId" class="form-select" required>
+                            <option value="">— Выберите —</option>
+                            @foreach (var cat in (ViewBag.Categories as List<CategoryDto> ?? new()))
+                            {
+                                <option value="@cat.Id">@cat.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1">Создать</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

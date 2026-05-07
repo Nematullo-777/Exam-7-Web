@@ -1,0 +1,52 @@
+@page "/login"
+@inject ApiService Api
+@inject NavigationManager Nav
+
+<PageTitle>Вход — EduPlatform</PageTitle>
+
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <i class="bi bi-mortarboard-fill"></i>
+            <h2>Добро пожаловать</h2>
+            <p>Войдите в свой аккаунт</p>
+        </div>
+
+        @if (_error != null) { <div class="alert alert-danger"><i class="bi bi-exclamation-circle"></i> @_error</div> }
+
+        <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-control" type="email" @bind="_email" placeholder="you@example.com" />
+        </div>
+        <div class="form-group">
+            <label class="form-label">Пароль</label>
+            <input class="form-control" type="password" @bind="_password" @onkeydown="@(e => { if(e.Key=="Enter") DoLogin(); })" placeholder="••••••••" />
+        </div>
+        <div style="text-align:right; margin-top:4px; margin-bottom:4px;">
+            <a href="/forgot-password" style="font-size:0.8rem;">Забыли пароль?</a>
+        </div>
+        <button class="btn btn-primary w-100" @onclick="DoLogin" disabled="@_loading" style="margin-top:8px">
+            @if (_loading) { <div class="spinner" style="width:16px;height:16px;border-width:2px"></div> }
+            else { <i class="bi bi-box-arrow-in-right"></i> } Войти
+        </button>
+        <div class="divider"></div>
+        <div style="text-align:center;font-size:0.875rem;color:var(--text-muted)">
+            Нет аккаунта? <a href="/register">Зарегистрироваться</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    string _email = "", _password = "";
+    string? _error;
+    bool _loading;
+
+    async Task DoLogin()
+    {
+        if (string.IsNullOrWhiteSpace(_email) || string.IsNullOrWhiteSpace(_password)) { _error = "Заполните все поля"; return; }
+        _loading = true; _error = null;
+        var (ok, err) = await Api.LoginAsync(new LoginDto { Email = _email, Password = _password });
+        if (ok) Nav.NavigateTo("/");
+        else { _error = err; _loading = false; }
+    }
+}

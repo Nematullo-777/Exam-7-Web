@@ -1,0 +1,85 @@
+@page "/courses"
+@inject ApiService Api
+
+<PageTitle>Курсы — EduPlatform</PageTitle>
+
+<div class="page-header">
+    <h2>Все курсы <span class="badge badge-secondary" style="font-size:0.8rem">@_courses.Count</span></h2>
+    <div class="d-flex gap-2">
+        <input class="form-control" style="width:220px" placeholder="🔍 Поиск..." @bind="_search" @bind:event="oninput" />
+    </div>
+</div>
+
+@if (_loading) { <div class="loading-center"><div class="spinner"></div></div> }
+else
+{
+    <div class="grid grid-courses">
+        @foreach (var c in Filtered)
+        {
+            <div class="card course-card">
+                <div class="course-card-thumb" style="background:linear-gradient(135deg,@CardColor(c.Level))">
+                    <span style="filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4))">📚</span>
+                </div>
+                <div class="course-card-body">
+                    <div class="d-flex gap-2 mb-1">
+                        <span class="badge @LevelBadge(c.Level)">@c.Level</span>
+                        <span class="badge badge-secondary">@c.CategoryName</span>
+                        @if (!c.IsPublished) { <span class="badge badge-warning">Черновик</span> }
+                    </div>
+                    <div class="course-card-title">@c.Title</div>
+                    <div class="text-muted fs-sm mb-1">@c.InstructorName</div>
+                    <div class="d-flex gap-3 fs-sm text-muted">
+                        <span><i class="bi bi-collection"></i> @c.LessonCount ур.</span>
+                        <span><i class="bi bi-star-fill" style="color:var(--warning)"></i> @c.AverageRating.ToString("F1")</span>
+                    </div>
+                </div>
+                <div class="course-card-footer">
+                    <span class="text-primary fw-700">@c.Price.ToString("C")</span>
+                    <a href="/courses/@c.Id" class="btn btn-primary btn-sm">Подробнее</a>
+                </div>
+            </div>
+        }
+    </div>
+    @if (!Filtered.Any()) { <div class="empty-state"><i class="bi bi-search"></i><h4>Ничего не найдено</h4><p>Попробуйте изменить запрос</p></div> }
+}
+
+@code {
+
+    List<GetCourseDto> _courses = new();
+
+    bool _loading = true;
+
+    string _search = "";
+
+    IEnumerable<GetCourseDto> Filtered => _courses.Where(c =>
+        string.IsNullOrWhiteSpace(_search) ||
+        c.Title.Contains(_search, StringComparison.OrdinalIgnoreCase));
+
+    protected override async Task OnInitializedAsync()
+    {
+        var r = await Api.GetCoursesAsync();
+
+        _courses = r?.Data ?? new List<GetCourseDto>();
+
+        _loading = false;
+    }
+
+    static string LevelBadge(CourseLevel l) => l switch
+    {
+        CourseLevel.Beginner => "badge-success",
+        CourseLevel.Expert => "badge-danger",
+        _ => "badge-info"
+    };
+
+    static string CardColor(CourseLevel l) => l switch
+    {
+        CourseLevel.Beginner =>
+            "rgba(34,197,94,0.2), rgba(108,99,255,0.05)",
+
+        CourseLevel.Expert =>
+            "rgba(239,68,68,0.2), rgba(108,99,255,0.05)",
+
+        _ =>
+            "rgba(59,130,246,0.2), rgba(108,99,255,0.05)"
+    };
+}

@@ -137,3 +137,16 @@ C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\bin\Debug\net9.0\rev
 C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\bin\Debug\net9.0\IniFileParser.dll
 C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\compressed\2qnud4a1oc-{0}-rbg3gd762z-rbg3gd762z.gz
 C:\Users\user\Desktop\Exam-7\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\compressed\4s748z5he7-{0}-rbg3gd762z-rbg3gd762z.gz
+C:\Users\user\Desktop\Day-19\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\MvcOnlineCourses.csproj.AssemblyReference.cache
+C:\Users\user\Desktop\Day-19\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\rpswa.dswa.cache.json
+C:\Users\user\Desktop\Day-19\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\MvcOnlineCourses.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\Desktop\Day-19\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\MvcOnlineCourses.AssemblyInfoInputs.cache
+C:\Users\user\Desktop\Day-19\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\MvcOnlineCourses.AssemblyInfo.cs
+C:\Users\user\Desktop\Day-19\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\MvcOnlineCourses.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\Day-19\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\MvcOnlineCourses.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\user\Desktop\Day-19\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\MvcOnlineCourses.RazorAssemblyInfo.cache
+C:\Users\user\Desktop\Day-19\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\MvcOnlineCourses.RazorAssemblyInfo.cs
+C:\Users\user\Desktop\Day-19\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\MvcOnlineCourses.sourcelink.json
+C:\Users\user\Desktop\Day-19\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\MvcOnlineCourses.dll
+C:\Users\user\Desktop\Day-19\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\refint\MvcOnlineCourses.dll
+C:\Users\user\Desktop\Day-19\OnlineCourses\MvcOnlineCourses\obj\Debug\net9.0\MvcOnlineCourses.pdb

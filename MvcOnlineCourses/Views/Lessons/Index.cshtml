@@ -1,7 +1,8 @@
-@model List<Application.DTOs.LessonDTOs.LessonDto>
+@using OnlineCourses.Application.DTOs.Courses.Response
+@model List<OnlineCourses.Application.DTOs.Lessons.Response.GetLessonDto>
 @{
     ViewData["Title"] = "Уроки";
-    var course = ViewBag.Course as Application.DTOs.CourseDTOs.CourseDto;
+    var course = ViewBag.Course as GetCourseDto;
 }
 
 <div class="main-content-wrapper">

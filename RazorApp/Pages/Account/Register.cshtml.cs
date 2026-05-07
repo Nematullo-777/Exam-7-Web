@@ -1,9 +1,9 @@
-using Application.DTOs.AuthDTOs;
-using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
+using OnlineCourses.Application.DTOs.Auth.Request;
+using OnlineCourses.Application.Interfaces.Services;
 
 namespace RazorApp.Pages.Account;
 
@@ -38,8 +38,7 @@ public class RegisterModel(IAuthService authService) : PageModel
         {
             FullName = Input.FullName,
             Email = Input.Email,
-            Password = Input.Password,
-            Role = Input.Role
+            Password = Input.Password
         });
 
         if (!result.IsSuccess)

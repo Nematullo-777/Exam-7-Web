@@ -17,5 +17,5 @@ public class RegisterViewModel
     public string Password { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Роль обязательна")]
-    public string Role = "Student";
+    public string Role { get; set; } = "Student";
 }

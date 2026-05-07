@@ -1,0 +1,148 @@
+@page "/instructor/lessons"
+@inject ApiService Api
+@inject NavigationManager Nav
+
+<PageTitle>Уроки — Инструктор</PageTitle>
+
+@if (!Api.IsInstructor) { Nav.NavigateTo("/"); return; }
+
+<div class="page-header">
+    <h2>Управление уроками</h2>
+</div>
+
+@if (_loading) { <div class="loading-center"><div class="spinner"></div></div> }
+else
+{
+    <div style="display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start">
+        <div>
+            <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:10px">Мои курсы</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+                @foreach (var c in _courses)
+                {
+                    <button class="card @(_selected?.Id == c.Id ? "active" : "")" style="text-align:left;padding:12px 16px;cursor:pointer;border:1px solid @(_selected?.Id == c.Id ? "var(--primary)" : "var(--border)")"
+                            @onclick="() => SelectCourse(c)">
+                        <div class="fw-600 fs-sm">@c.Title</div>
+                        <div class="text-muted fs-sm"><i class="bi bi-collection"></i> @c.LessonCount ур.</div>
+                    </button>
+                }
+            </div>
+        </div>
+
+        <div>
+            @if (_selected == null)
+            {
+                <div class="empty-state"><i class="bi bi-cursor-fill"></i><h4>Выберите курс слева</h4></div>
+            }
+            else
+            {
+                @if (_showAdd)
+                {
+                    <div class="card mb-3" style="padding:20px">
+                        <h5 class="fw-700 mb-2">Новый урок</h5>
+                        @if (_lessonErr != null) { <div class="alert alert-danger">@_lessonErr</div> }
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                            <div class="form-group"><label class="form-label">Название *</label><input class="form-control" @bind="_lessonDto.Title" /></div>
+                            <div class="form-group"><label class="form-label">Порядок</label><input class="form-control" type="number" @bind="_lessonDto.Order" /></div>
+                        </div>
+                        <div class="form-group"><label class="form-label">Описание</label><textarea class="form-control" @bind="_lessonDto.Description"></textarea></div>
+                        <div class="form-group"><label class="form-label">Ссылка на видео</label><input class="form-control" placeholder="https://youtube.com/..." @bind="_lessonDto.VideoUrl" /></div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary" @onclick="AddLesson">Добавить</button>
+                            <button class="btn btn-secondary" @onclick="() => _showAdd = false">Отмена</button>
+                        </div>
+                    </div>
+                }
+
+                @if (_lessons.Any())
+                {
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                        @foreach (var l in _lessons.OrderBy(x => x.Order))
+                        {
+                            <div class="card d-flex align-center gap-3" style="padding:14px 16px">
+                                <div style="width:36px;height:36px;background:var(--primary-light);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:700;flex-shrink:0">@l.Order</div>
+                                <div style="flex:1">
+                                    <div class="fw-600">@l.Title</div>
+                                    @if (!string.IsNullOrEmpty(l.Description)) { <div class="text-muted fs-sm">@l.Description</div> }
+                                    @if (!string.IsNullOrEmpty(l.VideoUrl)) { <a href="@l.VideoUrl" target="_blank" class="fs-sm text-primary"><i class="bi bi-play-circle"></i> Видео</a> }
+                                </div>
+                                <button class="btn-icon" @onclick="() => DelLesson(l.Id)"><i class="bi bi-trash" style="color:var(--danger)"></i></button>
+                            </div>
+                        }
+                    </div>
+                }
+                else { <div class="empty-state"><i class="bi bi-collection-play"></i><h4>Уроков пока нет</h4></div> }
+            }
+        </div>
+    </div>
+}
+
+@code {
+
+    List<GetCourseDto> _courses = new();
+
+    List<GetLessonDto> _lessons = new();
+
+    GetCourseDto? _selected;
+
+    bool _loading = true;
+
+    bool _showAdd;
+
+    CreateLessonDto _lessonDto = new();
+
+    string? _lessonErr;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var r = await Api.GetCoursesAsync();
+
+        _courses = r?.Data ?? new List<GetCourseDto>();
+
+        _courses = _courses
+            .Where(c => c.InstructorName == Api.CurrentUser?.FullName)
+            .ToList();
+
+        _loading = false;
+    }
+
+    async Task SelectCourse(GetCourseDto c)
+    {
+        _selected = c;
+
+        var r = await Api.GetLessons(c.Id);
+
+        _lessons = r?.Data ?? new List<GetLessonDto>();
+    }
+
+    async Task AddLesson()
+    {
+        _lessonErr = null;
+
+        if (_selected == null)
+        {
+            _lessonErr = "Выберите курс";
+            return;
+        }
+
+        _lessonDto.CourseId = _selected.Id;
+
+        var r = await Api.CreateLesson(_lessonDto);
+
+        if (r?.IsSuccess == true)
+        {
+            _showAdd = false;
+            _lessonDto = new CreateLessonDto();
+            await SelectCourse(_selected);
+        }
+        else
+        {
+            _lessonErr = r?.Error ?? "Ошибка";
+        }
+    }
+
+    async Task DelLesson(Guid id)
+    {
+        await Api.DeleteLessonAsync(_selected!.Id, id);
+        _lessons.RemoveAll(x => x.Id == id);
+    }
+}

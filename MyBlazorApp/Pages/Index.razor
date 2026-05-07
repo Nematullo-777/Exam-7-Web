@@ -1,0 +1,59 @@
+@page "/"
+@inject ApiService Api
+
+<PageTitle>EduPlatform — Главная</PageTitle>
+
+<div class="hero">
+    <div class="hero-title">Учись. Развивайся.<br/><span>Достигай высот.</span></div>
+    <p class="hero-sub">Тысячи курсов от лучших инструкторов. Начни своё обучение уже сегодня.</p>
+    <div class="d-flex gap-2">
+        <a href="/courses" class="btn btn-primary btn-lg"><i class="bi bi-book"></i> Все курсы</a>
+        @if (Api.CurrentUser == null) { <a href="/register" class="btn btn-secondary btn-lg"><i class="bi bi-person-plus"></i> Начать бесплатно</a> }
+    </div>
+</div>
+
+<div class="page-header">
+    <h2>Популярные курсы</h2>
+    <a href="/courses" class="btn btn-secondary btn-sm"><i class="bi bi-arrow-right"></i> Все курсы</a>
+</div>
+
+@if (_loading) { <div class="loading-center"><div class="spinner"></div></div> }
+else
+{
+    <div class="grid grid-courses">
+        @foreach (var c in _courses.Where(x => x.IsPublished).Take(6))
+        {
+            <div class="card course-card">
+                <div class="course-card-thumb">📚</div>
+                <div class="course-card-body">
+                    <div class="d-flex gap-2 mb-1">
+                        <span class="badge badge-primary">@c.Level</span>
+                        <span class="badge badge-secondary">@c.CategoryName</span>
+                    </div>
+                    <div class="course-card-title">@c.Title</div>
+                    <div class="text-muted fs-sm">@c.InstructorName</div>
+                </div>
+                <div class="course-card-footer">
+                    <span class="text-primary fw-700">@c.Price.ToString("C")</span>
+                    <a href="/courses/@c.Id" class="btn btn-primary btn-sm">Смотреть</a>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+
+    List<GetCourseDto> _courses = new();
+
+    bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var r = await Api.GetCoursesAsync();
+
+        _courses = r?.Data ?? new List<GetCourseDto>();
+
+        _loading = false;
+    }
+}

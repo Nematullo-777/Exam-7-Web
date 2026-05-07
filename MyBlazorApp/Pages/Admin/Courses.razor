@@ -1,0 +1,97 @@
+@page "/admin/courses"
+@inject ApiService Api
+@inject NavigationManager Nav
+
+<PageTitle>Все курсы — Admin</PageTitle>
+
+@if (!Api.IsAdmin) { Nav.NavigateTo("/"); return; }
+
+<div class="page-header">
+    <h2>Все курсы</h2>
+    <div class="d-flex gap-2">
+        <input class="form-control" style="width:220px" placeholder="🔍 Поиск..." @bind="_search" @bind:event="oninput" />
+    </div>
+</div>
+
+@if (_loading) { <div class="loading-center"><div class="spinner"></div></div> }
+else
+{
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Курс</th><th>Инструктор</th><th>Категория</th><th>Уровень</th><th>Цена</th><th>Статус</th><th>Действия</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Filtered)
+                {
+                    <tr>
+                        <td><div class="fw-600 fs-sm" style="max-width:200px">@c.Title</div></td>
+                        <td class="text-muted fs-sm">@c.InstructorName</td>
+                        <td><span class="badge badge-secondary">@c.CategoryName</span></td>
+                        <td><span class="badge @LevelBadge(c.Level)">@c.Level</span></td>
+                        <td class="fw-600 text-primary">@c.Price.ToString("C")</td>
+                        <td><span class="badge @(c.IsPublished ? "badge-success" : "badge-warning")">@(c.IsPublished ? "Опубликован" : "Черновик")</span></td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a href="/courses/@c.Id" class="btn-icon" title="Просмотр"><i class="bi bi-eye"></i></a>
+                                <button class="btn-icon" @onclick="() => Toggle(c)" title="@(c.IsPublished ? "Снять" : "Опубликовать")">
+                                    <i class="bi @(c.IsPublished ? "bi-eye-slash" : "bi-check-circle")" style="color:var(--warning)"></i>
+                                </button>
+                                <button class="btn-icon" @onclick="() => Del(c.Id)" title="Удалить">
+                                    <i class="bi bi-trash" style="color:var(--danger)"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (!Filtered.Any()) { <div class="empty-state"><i class="bi bi-journals"></i><h4>Курсы не найдены</h4></div> }
+}
+
+@code {
+
+    List<GetCourseDto> _courses = new();
+
+    bool _loading = true;
+
+    string _search = "";
+
+    IEnumerable<GetCourseDto> Filtered => _courses.Where(c =>
+        string.IsNullOrWhiteSpace(_search) ||
+        c.Title.Contains(_search, StringComparison.OrdinalIgnoreCase));
+
+    protected override async Task OnInitializedAsync()
+    {
+        var r = await Api.GetCoursesAsync();
+
+        _courses = r?.Data ?? new List<GetCourseDto>();
+
+        _loading = false;
+    }
+
+    async Task Toggle(GetCourseDto c)
+    {
+        var r = await Api.TogglePublishAsync(c.Id);
+
+        if (r?.IsSuccess == true)
+            c.IsPublished = !c.IsPublished;
+    }
+
+    async Task Del(Guid id)
+    {
+        var ok = await Api.DeleteCourseAsync(id);
+
+        if (ok)
+            _courses.RemoveAll(x => x.Id == id);
+    }
+
+    static string LevelBadge(CourseLevel l) => l switch
+    {
+        CourseLevel.Beginner => "badge-success",
+        CourseLevel.Intermediate => "badge-info",
+        CourseLevel.Expert => "badge-danger",
+        _ => "badge-info"
+    };
+}

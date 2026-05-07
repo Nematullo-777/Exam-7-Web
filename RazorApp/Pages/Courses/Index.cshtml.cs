@@ -1,37 +1,27 @@
-using Application.Common;
-using Application.DTOs.CategoryDTOs;
-using Application.DTOs.CourseDTOs;
-using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using NewRazorApp.Models;
+using NewRazorApp.Services;
 
-namespace RazorApp.Pages.Courses;
+namespace NewRazorApp.Pages.Courses;
 
-public class IndexModel(ICourseService courseService, ICategoryService categoryService) : PageModel
+public class IndexModel : PageModel
 {
-    public PagedResult<CourseDto> Courses { get; set; } = new();
-    public List<CategoryDto> Categories { get; set; } = new();
+    private readonly ApiService _api;
+    public List<CourseDto> Courses { get; set; } = new();
+    public IndexModel(ApiService api) => _api = api;
 
-    [BindProperty(SupportsGet = true)] public string? Search { get; set; }
-    [BindProperty(SupportsGet = true)] public Guid? CategoryId { get; set; }
-    [BindProperty(SupportsGet = true)] public int CurrentPage { get; set; } = 1;
+    public async Task OnGetAsync() { var r = await _api.GetCoursesAsync(); Courses = r?.Data ?? new(); }
 
-    public async Task OnGetAsync()
+    public async Task<IActionResult> OnPostDeleteAsync(Guid id)
     {
-        var filter = new CourseFilterDto
-        {
-            Search = Search,
-            CategoryId = CategoryId,
-            Page = CurrentPage,
-            PageSize = 10,
-            IsPublished = true
-        };
+        await _api.DeleteCourseAsync(id);
+        return RedirectToPage();
+    }
 
-        var result = await courseService.GetAllAsync(filter);
-        Courses = result.Value ?? new PagedResult<CourseDto>();
-
-        var cats = await categoryService.GetAllAsync();
-        Categories = cats.Value ?? new List<CategoryDto>();
+    public async Task<IActionResult> OnPostToggleAsync(Guid id)
+    {
+        await _api.TogglePublishAsync(id);
+        return RedirectToPage();
     }
 }

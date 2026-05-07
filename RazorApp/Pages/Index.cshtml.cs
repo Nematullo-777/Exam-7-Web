@@ -1,8 +1,19 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using NewRazorApp.Models;
+using NewRazorApp.Services;
 
-namespace RazorApp.Pages;
+namespace NewRazorApp.Pages;
 
-public class IndexModel(ILogger<IndexModel> logger) : PageModel
+public class IndexModel : PageModel
 {
-    public void OnGet() { }
+    private readonly ApiService _api;
+    public List<CourseDto> Courses { get; set; } = new();
+
+    public IndexModel(ApiService api) => _api = api;
+
+    public async Task OnGetAsync()
+    {
+        var r = await _api.GetCoursesAsync();
+        Courses = r?.Data ?? new();
+    }
 }

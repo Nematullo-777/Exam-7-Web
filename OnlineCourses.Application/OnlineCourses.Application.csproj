@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OnlineCourses.Domain\OnlineCourses.Domain.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\" />
+    <Folder Include="DTOs\" />
+    <Folder Include="DTOs\Auth\" />
+    <Folder Include="DTOs\Auth\Request\" />
+    <Folder Include="DTOs\Auth\Response\" />
+    <Folder Include="DTOs\Categories\" />
+    <Folder Include="DTOs\Categories\Request\" />
+    <Folder Include="DTOs\Categories\Response\" />
+    <Folder Include="DTOs\Courses\" />
+    <Folder Include="DTOs\Courses\Request\" />
+    <Folder Include="DTOs\Courses\Response\" />
+    <Folder Include="DTOs\Enrollments\" />
+    <Folder Include="DTOs\Enrollments\Request\" />
+    <Folder Include="DTOs\Enrollments\Response\" />
+    <Folder Include="DTOs\Lessons\" />
+    <Folder Include="DTOs\Lessons\Request\" />
+    <Folder Include="DTOs\Lessons\Response\" />
+    <Folder Include="DTOs\Reviews\" />
+    <Folder Include="DTOs\Reviews\Request\" />
+    <Folder Include="DTOs\Reviews\Response\" />
+    <Folder Include="DTOs\Students\" />
+    <Folder Include="DTOs\Students\Request\" />
+    <Folder Include="DTOs\Students\Response\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Interfaces\Repositories\" />
+    <Folder Include="Interfaces\Services\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+</Project>

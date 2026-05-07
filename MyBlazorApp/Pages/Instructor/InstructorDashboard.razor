@@ -1,0 +1,243 @@
+@page "/instructor"
+@inject ApiService Api
+@inject NavigationManager Nav
+
+<PageTitle>Мои курсы — Инструктор</PageTitle>
+
+@if (!Api.IsInstructor) { Nav.NavigateTo("/"); return; }
+
+<div class="grid grid-3 mb-3">
+    <div class="card stat-card">
+        <div class="stat-icon" style="background:rgba(108,99,255,0.15);color:var(--primary)"><i class="bi bi-book-fill"></i></div>
+        <div class="stat-info"><div class="stat-value">@_myCourses.Count</div><div class="stat-label">Мои курсы</div></div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-icon" style="background:rgba(34,197,94,0.15);color:var(--success)"><i class="bi bi-check2-circle"></i></div>
+        <div class="stat-info"><div class="stat-value">@_myCourses.Count(x => x.IsPublished)</div><div class="stat-label">Опубликовано</div></div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-icon" style="background:rgba(245,158,11,0.15);color:var(--warning)"><i class="bi bi-collection-play"></i></div>
+        <div class="stat-info"><div class="stat-value">@_myCourses.Sum(x => x.LessonCount)</div><div class="stat-label">Всего уроков</div></div>
+    </div>
+</div>
+
+<div class="page-header">
+    <h2>Мои курсы</h2>
+    <button class="btn btn-primary" @onclick="() => { _showCreate = true; _createErr = null; _dto = new(); }">
+        <i class="bi bi-plus-lg"></i> Новый курс
+    </button>
+</div>
+
+@if (_showCreate)
+{
+    <div class="modal-backdrop" @onclick="() => _showCreate = false">
+        <div class="modal" @onclick:stopPropagation>
+            <div class="modal-header">
+                <span class="modal-title">Новый курс</span>
+                <button class="btn-icon" @onclick="() => _showCreate = false"><i class="bi bi-x-lg"></i></button>
+            </div>
+
+            @if (_createErr != null)
+            {
+                <div class="alert alert-danger">@_createErr</div>
+            }
+
+            <div class="form-group">
+                <label class="form-label">Название *</label>
+                <input class="form-control" @bind="_dto.Title" placeholder="Введите название курса" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Описание</label>
+                <textarea class="form-control" @bind="_dto.Description" placeholder="Краткое описание"></textarea>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div class="form-group">
+                    <label class="form-label">Цена</label>
+                    <input class="form-control" type="number" step="0.01" min="0" @bind="_dto.Price" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Уровень</label>
+                    <select class="form-control" @bind="_dto.Level">
+                        <option value="0">Начинающий</option>
+                        <option value="1">Средний</option>
+                        <option value="2">Продвинутый</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Категория *</label>
+                <select class="form-control" @bind="_dto.CategoryId">
+                    <option value="00000000-0000-0000-0000-000000000000">— Выберите категорию —</option>
+                    @foreach (var cat in _cats)
+                    {
+                        <option value="@cat.Id">@cat.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="d-flex gap-2 mt-3">
+                <button class="btn btn-primary flex-1" @onclick="CreateCourse" disabled="@_creating">
+                    @if (_creating) { <span class="spin"></span> } Создать
+                </button>
+                <button class="btn btn-secondary" @onclick="() => _showCreate = false">Отмена</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (_loading)
+{
+    <div class="loading-center"><div class="spinner"></div></div>
+}
+else
+{
+    <div class="grid grid-courses">
+        @foreach (var c in _myCourses)
+        {
+            <div class="card course-card">
+                <div class="course-card-thumb">📖</div>
+                <div class="course-card-body">
+                    <div class="d-flex gap-2 mb-1">
+                        <span class="badge badge-primary">@c.Level</span>
+                        @if (!c.IsPublished)
+                        {
+                            <span class="badge badge-warning">Черновик</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-success">Опубликован</span>
+                        }
+                    </div>
+                    <div class="course-card-title">@c.Title</div>
+                    <div class="d-flex gap-3 fs-sm text-muted">
+                        <span><i class="bi bi-collection"></i> @c.LessonCount ур.</span>
+                        <span><i class="bi bi-star-fill" style="color:var(--warning)"></i> @c.AverageRating.ToString("F1")</span>
+                    </div>
+                </div>
+                <div class="course-card-footer">
+                    <span class="text-primary fw-700">@c.Price.ToString("C")</span>
+                    <div class="d-flex gap-1">
+                        <a href="/courses/@c.Id" class="btn-icon" title="Просмотр"><i class="bi bi-eye"></i></a>
+                        <button class="btn-icon" @onclick="() => Toggle(c)" title="Опубл./Скрыть">
+                            <i class="bi @(c.IsPublished ? "bi-eye-slash" : "bi-send")" style="color:var(--warning)"></i>
+                        </button>
+                        <button class="btn-icon" @onclick="() => Del(c.Id)">
+                            <i class="bi bi-trash" style="color:var(--danger)"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!_myCourses.Any())
+    {
+        <div class="empty-state">
+            <i class="bi bi-book"></i>
+            <h4>У вас пока нет курсов</h4>
+            <p>Создайте свой первый курс!</p>
+        </div>
+    }
+}
+
+@code {
+
+    List<GetCourseDto> _myCourses = new();
+
+    List<GetCategoryDto> _cats = new();
+
+    bool _loading = true;
+
+    bool _showCreate;
+
+    bool _creating;
+
+    CreateCourseDto _dto = new();
+
+    string? _createErr;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCourses();
+
+        var cats = await Api.GetCategoriesAsync();
+
+        _cats = cats?.Data ?? new List<GetCategoryDto>();
+
+        _loading = false;
+    }
+
+    async Task LoadCourses()
+    {
+        var r = await Api.GetCoursesAsync();
+
+        var all = r?.Data ?? new List<GetCourseDto>();
+
+        _myCourses = Api.CurrentUser != null
+            ? all.Where(c =>
+                    c.InstructorName == Api.CurrentUser.FullName)
+                .ToList()
+            : all;
+    }
+
+    async Task CreateCourse()
+    {
+        _createErr = null;
+
+        if (string.IsNullOrWhiteSpace(_dto.Title))
+        {
+            _createErr = "Введите название курса";
+            return;
+        }
+
+        if (_dto.CategoryId == Guid.Empty)
+        {
+            _createErr = "Выберите категорию";
+            return;
+        }
+
+        _creating = true;
+
+        try
+        {
+            var r = await Api.CreateCourseAsync(_dto);
+
+            if (r?.IsSuccess == true)
+            {
+                _showCreate = false;
+
+                _dto = new CreateCourseDto();
+
+                await LoadCourses();
+            }
+            else
+            {
+                _createErr = r?.Error ?? "Ошибка создания курса";
+            }
+        }
+        catch (Exception ex)
+        {
+            _createErr = ex.Message;
+        }
+        finally
+        {
+            _creating = false;
+        }
+    }
+
+    async Task Toggle(GetCourseDto c)
+    {
+        await Api.TogglePublishAsync(c.Id);
+        c.IsPublished = !c.IsPublished;
+    }
+
+    async Task Del(Guid id)
+    {
+        var ok = await Api.DeleteCourseAsync(id);
+
+        if (ok)
+        {
+            _myCourses.RemoveAll(x => x.Id == id);
+        }
+    }
+}
